@@ -8,31 +8,123 @@
  * https://github.com/facebook/react-native
  */
 
-import React, { Component } from 'react';
+import React, { Component,PureComponent } from 'react';
 import { Platform, StyleSheet, Text, View } from 'react-native';
-import Palmmob3WrongbookTools from 'react-native-palmmob3-wrongbook-tools';
+import Palmmob3WrongbookTools, { 
+  DragResizeContainer,DragResizeBlock,
+  AXIS_X,
+  AXIS_Y,
+  AXIS_ALL,
 
-export default class App extends Component<{}> {
-  state = {
-    status: 'starting',
-    message: '--'
-  };
-  componentDidMount() {
-    Palmmob3WrongbookTools.sampleMethod('Testing', 123, (message) => {
-      this.setState({
-        status: 'native callback received',
-        message
-      });
-    });
-  }
+  CONNECTOR_TOP_LEFT,
+  CONNECTOR_TOP_MIDDLE,
+  CONNECTOR_TOP_RIGHT,
+  CONNECTOR_MIDDLE_RIGHT,
+  CONNECTOR_BOTTOM_RIGHT,
+  CONNECTOR_BOTTOM_MIDDLE,
+  CONNECTOR_BOTTOM_LEFT,
+  CONNECTOR_MIDDLE_LEFT,
+  CONNECTOR_CENTER,
+ } from 'react-native-palmmob3-wrongbook-tools';
+
+const defaultLimitation = {
+  x: 0,
+  y: 0,
+  w: 0,
+  h: 0,
+};
+
+const connectors = [            
+  CONNECTOR_TOP_MIDDLE,  
+  CONNECTOR_BOTTOM_MIDDLE,          
+  CONNECTOR_MIDDLE_RIGHT,            
+  CONNECTOR_MIDDLE_LEFT,
+  CONNECTOR_CENTER
+];
+
+
+class Container extends PureComponent {
+
   render() {
+    const {
+      children,
+      title,
+      onInit,
+    } = this.props;
+
     return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>☆Palmmob3WrongbookTools example☆</Text>
-        <Text style={styles.instructions}>STATUS: {this.state.status}</Text>
-        <Text style={styles.welcome}>☆NATIVE CALLBACK MESSAGE☆</Text>
-        <Text style={styles.instructions}>{this.state.message}</Text>
+      <View
+        style={styles.container2}
+      >        
+        <DragResizeContainer
+          style={styles.canvas}
+          onInit={onInit}
+        >
+          {children}
+        </DragResizeContainer>        
       </View>
+    );
+  }
+}
+
+export default class App extends Component {
+
+  constructor(props) {
+    super(props);
+
+    const defaultLimitation = {
+      x: 0,
+      y: 0,
+      w: 0,
+      h: 0,
+    };
+
+    this.state = {
+      currentEvent: null,
+      selectedBlock: null,
+      limitation1: {...defaultLimitation},
+      limitation2: {...defaultLimitation},
+      limitation3: {...defaultLimitation},
+      limitation4: {...defaultLimitation},
+      limitation5: {...defaultLimitation},
+      status: 'starting',
+      message: '--'
+    };
+
+  }
+
+  componentDidMount() {
+
+  }
+
+  render() {
+    const {
+      limitation1,
+    } = this.state;
+
+    return (
+        <Container
+        title="Default props"
+        onInit={(limitation) => {
+          this.setState(() => {
+            this.state.limitation1 = limitation;
+            return this.state;
+          });
+        }}
+      >
+          <DragResizeBlock
+            x={0}
+            y={0}
+            w={80}
+            h={80}
+            limitation={limitation1}
+            connectors={connectors}
+          >
+            <View
+              style={styles.kuang}
+            />
+          </DragResizeBlock>          
+        </Container>
     );
   }
 }
@@ -53,5 +145,25 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#333333',
     marginBottom: 5,
+  },
+  canvas: {
+    width: '100%',
+    height: '100%',
+    backgroundColor: '#D1D5DA00',
+    marginTop: 4,
+    borderWidth: 2,
+    borderColor:'#FF0000'
+  },
+  kuang: {
+    width: '100%',
+    height: '100%',
+    borderWidth: 2,
+    borderColor:'#000FFF',
+  },
+  container2: {
+    zIndex: 999,
+    flexDirection: 'column',
+    width: 300,
+    height: 200,
   },
 });
