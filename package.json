@@ -2,7 +2,7 @@
   "name": "react-native-palmmob3-wrongbook-tools",
   "title": "React Native Palmmob3 Wrongbook Tools",
   "version": "1.0.0",
-  "description": "TODO",
+  "description": "tools",
   "main": "index.js",
   "files": [
     "README.md",
@@ -23,8 +23,8 @@
     "react-native"
   ],
   "author": {
-    "name": "Your Name",
-    "email": "yourname@email.com"
+    "name": "callee",
+    "email": "240100889@qq.com"
   },
   "license": "MIT",
   "licenseFilename": "LICENSE",
