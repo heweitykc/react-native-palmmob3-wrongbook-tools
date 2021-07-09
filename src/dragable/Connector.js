@@ -54,11 +54,12 @@ export class Connector extends Component {
           0,
         ]);
       },
+
       onPanResponderMove: (event, gestureState) => {
         const {
           onMove
         } = this.props;
-
+        console.log('onPanResponderMove');
         onMove([
           gestureState.dx - this.position.x,
           gestureState.dy - this.position.y,
@@ -69,7 +70,9 @@ export class Connector extends Component {
           y: gestureState.dy,
         };
       },
+
       onPanResponderTerminationRequest: (event, gestureState) => true,
+
       onPanResponderRelease: (event, gestureState) => {
         // The user has released all touches while this view is the
         // responder. This typically means a gesture has succeeded
@@ -82,15 +85,18 @@ export class Connector extends Component {
           gestureState.moveY,
         ]);
       },
+
       onPanResponderTerminate: (event, gestureState) => {
         // Another component has become the responder, so this gesture
         // should be cancelled
       },
+
       onShouldBlockNativeResponder: (event, gestureState) => {
         // Returns whether this component should block native components from becoming the JS
         // responder. Returns true by default. Is currently only supported on android.
         return true;
       },
+      
     });
   }
 

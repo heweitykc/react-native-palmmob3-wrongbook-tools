@@ -10,7 +10,7 @@
 
 import React, { Component,PureComponent } from 'react';
 import { Platform, StyleSheet, Text, View } from 'react-native';
-import Palmmob3WrongbookTools, { 
+import Palmmob3WrongbookTools, {
   DragResizeContainer,DragResizeBlock,
   AXIS_X,
   AXIS_Y,
