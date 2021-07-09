@@ -2,7 +2,8 @@ import React, { Component,PureComponent } from 'react';
 import { Platform, StyleSheet, Text, View,TouchableOpacity } from 'react-native';
 import {  TestPaper } from 'react-native-palmmob3-wrongbook-tools';
 
-let testpaper1 = require('./testpaper1.jpg');
+let testpaper1 = require('./paper1.jpeg');
+// let testpaper1 = require('./testpaper1_zhai.jpg');
 // let testpaper1 = require('./yiti.png');
 
 
@@ -13,7 +14,7 @@ export default class App extends Component {
     super(props);
 
     this.state = {
-      paperRotation:90
+      paperRotation:0
     };
   }
 
@@ -34,8 +35,8 @@ export default class App extends Component {
       // }
       console.log('onRotatePress');
       this.setState((prevState) => ({
-        paperRotation: prevState.paperRotation + 90
-    }));          
+          paperRotation: (prevState.paperRotation + 90)%360
+      }));          
   };
 
   render() {
