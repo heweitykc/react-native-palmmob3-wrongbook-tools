@@ -266,8 +266,8 @@ export class DragResizeBlock extends Component {
 
       if (onResize !== null) {
         onResize([
-          this.state.x,
-          this.state.y,
+          this.state.w,
+          this.state.h,
         ]);
       }
 
@@ -301,8 +301,8 @@ export class DragResizeBlock extends Component {
 
       if (onResize !== null) {
         onResize([
-          this.state.x,
-          this.state.y,
+          this.state.w,
+          this.state.h,
         ]);
       }
 
@@ -344,8 +344,8 @@ export class DragResizeBlock extends Component {
 
       if (onResize !== null) {
         onResize([
-          this.state.x,
-          this.state.y,
+          this.state.w,
+          this.state.h,
         ]);
       }
 
@@ -377,8 +377,8 @@ export class DragResizeBlock extends Component {
 
       if (onResize !== null) {
         onResize([
-          this.state.x,
-          this.state.y,
+          this.state.w,
+          this.state.h,
         ]);
       }
 
@@ -418,8 +418,8 @@ export class DragResizeBlock extends Component {
 
       if (onResize !== null) {
         onResize([
-          this.state.x,
-          this.state.y,
+          this.state.w,
+          this.state.h,
         ]);
       }
 
@@ -451,8 +451,8 @@ export class DragResizeBlock extends Component {
 
       if (onResize !== null) {
         onResize([
-          this.state.x,
-          this.state.y,
+          this.state.w,
+          this.state.h,
         ]);
       }
 
@@ -494,8 +494,8 @@ export class DragResizeBlock extends Component {
 
       if (onResize !== null) {
         onResize([
-          this.state.x,
-          this.state.y,
+          this.state.w,
+          this.state.h,
         ]);
       }
 
@@ -529,8 +529,8 @@ export class DragResizeBlock extends Component {
 
       if (onResize !== null) {
         onResize([
-          this.state.x,
-          this.state.y,
+          this.state.w,
+          this.state.h,
         ]);
       }
 
@@ -555,8 +555,8 @@ export class DragResizeBlock extends Component {
 
     if (onResizeEnd !== null) {
       onResizeEnd([
-        this.state.x,
-        this.state.y,
+        this.state.w,
+        this.state.h,
       ]);
     }
   }

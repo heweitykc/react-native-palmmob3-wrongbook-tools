@@ -22,19 +22,12 @@ const testpaper_styles = StyleSheet.create({
         borderColor:'#FF0000',
         borderWidth:1
     },
-    toolbar : {
-        height: 100,
-        width: '90%',
-        // backgroundColor: '#00FFFF',
-        justifyContent:"center",
-        alignItems:"center",        
-    },
-    toolbar_rotate: {
-        fontSize:50,
-        width:150,
-        height:50,
-        backgroundColor:"#00F0FF"
-    }     
+    kuang: {
+        width: '100%',
+        height: '100%',
+        borderWidth: 2,
+        borderColor:'#000FFF',
+    },   
 });
 
 export {
