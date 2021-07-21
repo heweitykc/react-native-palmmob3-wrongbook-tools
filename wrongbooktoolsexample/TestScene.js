@@ -1,10 +1,10 @@
 import React, { Component,PureComponent } from 'react';
 import { Platform, StyleSheet, Text, View,TouchableOpacity } from 'react-native';
-import {  TestPaper } from 'react-native-palmmob3-wrongbook-tools';
+import {  TestPaper,TestComponent } from 'react-native-palmmob3-wrongbook-tools';
 
-let testpaper1 = require('./paper1.jpeg');
+// let testpaper1 = require('./paper1.jpeg');
 // let testpaper1 = require('./testpaper1_zhai.jpg');
-// let testpaper1 = require('./yiti.png');
+let testpaper1 = require('./yiti.png');
 
 
 
@@ -42,10 +42,16 @@ export default class App extends Component {
   render() {
     return (
       <View style={styles.bg} >
-        <View style={styles.paper} ><TestPaper paperSrc={testpaper1} paperRotation={this.state.paperRotation} onRotate={this.onRotate} onDragEnd={this.onDragEnd} onResizeEnd={this.onResizeEnd} /></View>
+        <View style={styles.paper} >
+          <TestPaper  paperSrc={testpaper1} paperRotation={this.state.paperRotation} >
+            <Text>子组件、、、、</Text>
+          </TestPaper>        
+        </View>
         <View style={styles.toolbar} >
                 <TouchableOpacity onPress={this.onRotatePress.bind(this)} >
-                    <View  style={styles.toolbar_rotate}><Text>旋转</Text></View>
+                    <View  style={styles.toolbar_rotate}>
+                      <Text>旋转</Text>
+                    </View>
                 </TouchableOpacity>                
             </View>        
       </View>      

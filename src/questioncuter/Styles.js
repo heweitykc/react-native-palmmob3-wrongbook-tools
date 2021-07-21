@@ -13,7 +13,9 @@ const testpaper_styles = StyleSheet.create({
         position:'absolute',
         zIndex: -100,
         top:0,
-        left:0
+        left:0,
+        borderWidth:1,
+        borderColor:"#FF0000"
     },    
     resize_container: {
         flex:1,

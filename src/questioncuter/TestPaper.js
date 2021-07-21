@@ -23,57 +23,60 @@ const defaultLimitation = {
     w: 300,
     h: 500,
 };
-const connectors = [            
-    CONNECTOR_TOP_LEFT,  
-    CONNECTOR_TOP_RIGHT,          
+const connectors = [
+    CONNECTOR_TOP_LEFT,
+    CONNECTOR_TOP_RIGHT,
     CONNECTOR_BOTTOM_LEFT,
     CONNECTOR_BOTTOM_RIGHT,
     CONNECTOR_CENTER
 ];
 
-const computePaperLayout = (props,containerInfo,imgInfo,tag) => {
-    console.log('computePaperLayout...',containerInfo,imgInfo,props);
+const compareLayout = (layout1, layout2) => {
+    console.log(layout1);
+    console.log(layout2);
+    return (layout1.x == layout2.x) && 
+        (layout1.y == layout2.y) &&
+        (layout1.w == layout2.w) &&
+        (layout1.h == layout2.h);
+};
+
+const computePaperLayout = (props,containerInfo,imgInfo) => {
+    // console.log('computePaperLayout...',containerInfo,imgInfo,props);
 
     let layout = {w:0,h:0,x:0,y:0};
 
     if(!containerInfo) return layout;
     if(imgInfo.width <= 0)  return layout;
 
-    let container_ratio = containerInfo.w / containerInfo.h;    
-    console.log(container_ratio);
+    let container_ratio = containerInfo.w / containerInfo.h;
     
     if(props.paperRotation % 180 === 0){  //竖排
         let img_ratio = imgInfo.width / imgInfo.height;
         if(container_ratio >= img_ratio){
             console.log('1');
             layout.h = containerInfo.h;
-            layout.w = layout.h * img_ratio;
-            layout.x = (containerInfo.w - layout.w)*0.5;
-            layout.y = 0;                
+            layout.w = layout.h * img_ratio;              
         } else {
             console.log('2');
             layout.w = containerInfo.w;
-            layout.h = layout.w / img_ratio;
-            layout.y = (containerInfo.h - layout.h)*0.5;
-            layout.x = 0;   
+            layout.h = layout.w / img_ratio; 
         }
     } else {                        //横排      
         let img_ratio = imgInfo.height / imgInfo.width;  
         if(container_ratio < img_ratio){
             console.log('3');
             layout.h = containerInfo.w;
-            layout.w = layout.h / img_ratio;    
-            layout.x = (containerInfo.w - layout.w)*0.5;
-            layout.y = (containerInfo.h - layout.h)*0.5;            
+            layout.w = layout.h / img_ratio;               
         } else {
             console.log('4');
             layout.w = containerInfo.h;
             layout.h = layout.w * img_ratio;
-            layout.x = (containerInfo.w - layout.w)*0.5;
-            layout.y = (containerInfo.h - layout.h)*0.5;  
         }
-
     }
+    layout.w = parseInt(layout.w);
+    layout.h = parseInt(layout.h);
+    layout.x = parseInt((containerInfo.w - layout.w)*0.5);
+    layout.y = parseInt((containerInfo.h - layout.h)*0.5);
 
     console.log('computePaperLayout result ', layout);
     return layout;
@@ -82,9 +85,9 @@ const computePaperLayout = (props,containerInfo,imgInfo,tag) => {
 const TestPaper = (props) => {
     const onDragEnd = (evt) => {
         console.log(evt);
-        if(props.onDragStart !== null) {
+        if(props.onDragEnd !== null) {
             props.onDragEnd(evt);
-        }        
+        }
     };
 
     const onResizeEnd = (info) => {
@@ -99,7 +102,9 @@ const TestPaper = (props) => {
         setLimitation1({...info});
         let resInfo = Image.resolveAssetSource(props.paperSrc);
         let newlayout = computePaperLayout(props, info, resInfo,'oninit');
-        setPaperLayout({...newlayout});
+        if(!compareLayout(paperLayout, newlayout)){
+            setPaperLayout({...newlayout});
+        }        
     };
 
     const [paperLayout,setPaperLayout] = useState(computePaperLayout(props,null,null,'usestate'));
@@ -112,8 +117,9 @@ const TestPaper = (props) => {
         onContainerInit(limitation1);
     }, [props.paperRotation]);
 
-    return (
-        <View style={[testpaper_styles.container]} >
+    let paperimg = null;
+    if(paperLayout.w > 0){
+        paperimg = (
             <Image source={props.paperSrc} 
                 style={[
                     testpaper_styles.imbg, 
@@ -123,6 +129,14 @@ const TestPaper = (props) => {
                     }
                 ]}
             />
+        );
+    } else {
+        return null;
+    }
+
+    return (
+        <View style={[testpaper_styles.container]} >
+            {paperimg}
             <DragResizeContainer
                 style={testpaper_styles.resize_container}
                 onInit={onContainerInit}
