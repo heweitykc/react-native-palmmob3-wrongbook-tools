@@ -86,6 +86,27 @@ public class SketchCanvas extends View {
         return false;
     }
 
+    public boolean openImageData(String base64, String mode) {
+        if(base64 == null){
+            return false;
+        }
+        try{
+            byte[] bitmapArray = Base64.decode(base64, Base64.DEFAULT);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(bitmapArray, 0, bitmapArray.length);
+            if(bitmap == null) {
+                return false;
+            }
+            mBackgroundImage = bitmap;
+            mOriginalHeight = bitmap.getHeight();
+            mOriginalWidth = bitmap.getWidth();
+            mContentMode = mode;
+            invalidateCanvas(true);
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
+
     public void setCanvasText(ReadableArray aText) {
         mArrCanvasText.clear();
         mArrSketchOnText.clear();
