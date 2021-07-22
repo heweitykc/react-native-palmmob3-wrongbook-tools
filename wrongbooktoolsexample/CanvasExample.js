@@ -71,11 +71,6 @@
    render() {
      return (
        <View style={styles.container}>
-            <TouchableOpacity onPress={() => {
-              this.selectByAlbum();
-             }}>
-               <Text style={{ alignSelf: 'center', marginTop: 15, fontSize: 18 }}>选取相册</Text>
-            </TouchableOpacity>
          {
            this.state.example === 0 &&
            <View style={{ justifyContent: 'center', alignItems: 'center', width: 340 }}>
@@ -459,10 +454,15 @@
          {
            this.state.example === 5 &&
            <View style={{ flex: 1, flexDirection: 'row' }}>
+            <TouchableOpacity onPress={() => {
+              this.selectByAlbum();
+            }}>
+              <Text style={{ alignSelf: 'center', marginTop: 15, fontSize: 18 }}>选取相册</Text>
+            </TouchableOpacity>
              <RNSketchCanvas
               //  localSourceImage={{ filename: this.state.filepath.fileName, directory:RNSketchCanvas.CACHES,  mode: 'AspectFit' }}
               //  localSourceImage={{ filename: this.state.filepath.uri, mode: 'AspectFit' }}
-              localSourceImage={{ filedata : this.state.fileinfo.base64,  mode: 'AspectFit' }}
+              localSourceImage={{ filedata : this.state.fileinfo?.base64,  mode: 'AspectFit' }}
                // localSourceImage={{ filename: 'bulb.png', directory: RNSketchCanvas.MAIN_BUNDLE }}
                containerStyle={{ backgroundColor: 'transparent', flex: 1 }}
                canvasStyle={{ backgroundColor: 'transparent', flex: 1 }}
