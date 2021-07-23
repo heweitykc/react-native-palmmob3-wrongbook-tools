@@ -6,8 +6,6 @@ import {  TestPaper,TestComponent } from 'react-native-palmmob3-wrongbook-tools'
 // let testpaper1 = require('./testpaper1_zhai.jpg');
 let testpaper1 = require('./yiti.png');
 
-
-
 export default class App extends Component {
 
   constructor(props) {
@@ -36,14 +34,17 @@ export default class App extends Component {
       console.log('onRotatePress');
       this.setState((prevState) => ({
           paperRotation: (prevState.paperRotation + 90)%360
-      }));          
+      }));
   };
 
   render() {
+    let rotateStr = this.state.paperRotation + 'deg';
+
     return (
       <View style={styles.bg} >
-        <View style={styles.paper} >
-          <TestPaper  paperSrc={testpaper1} paperRotation={this.state.paperRotation} >
+        <View style={[styles.paper,{transform: [{rotateZ:rotateStr}]} ]} >
+          <TestPaper  paperSrc={testpaper1} paperRotation={0} 
+              onDragEnd={this.onDragEnd.bind(this)}  onResizeEnd={this.onResizeEnd.bind(this)}  >
             <Text>子组件、、、、</Text>
           </TestPaper>        
         </View>
