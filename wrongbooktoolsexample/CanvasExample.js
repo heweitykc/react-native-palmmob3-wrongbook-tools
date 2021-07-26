@@ -697,5 +697,3 @@
    }
  });
  
- AppRegistry.registerComponent('example', () => example);
- 
