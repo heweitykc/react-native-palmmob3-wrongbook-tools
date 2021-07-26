@@ -5,6 +5,7 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 import PropTypes from 'prop-types';
+import Svg, {Path} from 'react-native-svg';
 
 import {
   Connector,
@@ -700,6 +701,8 @@ export class DragResizeBlock extends Component {
       isSelected,
     } = this.state;
 
+    let path = "M 0 0 L "+w+" 0  L "+w+" "+h+" L 0 "+h+" L 0 0";
+
     return (
       <View
         style={{
@@ -712,6 +715,9 @@ export class DragResizeBlock extends Component {
           zIndex: isSelected ? zIndex + 1 : zIndex,
         }}
       >
+        <Svg height={h} width={w} fill="yellow" >
+          <Path d={path} stroke="black" />
+        </Svg>
         <TouchableWithoutFeedback
           onPress={this.onPress}
         >
