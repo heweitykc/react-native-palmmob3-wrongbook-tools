@@ -194,19 +194,19 @@ export class DragResizeBlock extends Component {
     };
   }
 
-  /**
-   * Handle press event.
-   * @param {Event} event - Press event.
-   */
-  onPress = (event) => {
-    const {
-      onPress,
-    } = this.props;
+  // /**
+  //  * Handle press event.
+  //  * @param {Event} event - Press event.
+  //  */
+  // onPress = (event) => {
+  //   const {
+  //     onPress,
+  //   } = this.props;
 
-    if (onPress !== null) {
-      onPress(event);
-    }
-  }
+  //   if (onPress !== null) {
+  //     onPress(event);
+  //   }
+  // }
 
   /**
    * Handle resize start event.
@@ -701,7 +701,9 @@ export class DragResizeBlock extends Component {
       isSelected,
     } = this.state;
 
-    let path = "M 0 0 L "+w+" 0  L "+w+" "+h+" L 0 "+h+" L 0 0";
+    let path_w = w - CONNECTOR_SIZE;
+    let path_h = h - CONNECTOR_SIZE;
+    let path = "M 0 0 L "+ path_w +" 0  L "+ path_w +" "+ path_h +" L 0 "+ path_h +" L 0 0";
 
     return (
       <View
@@ -715,24 +717,10 @@ export class DragResizeBlock extends Component {
           zIndex: isSelected ? zIndex + 1 : zIndex,
         }}
       >
-        <Svg height={h} width={w} fill="yellow" >
+        <Svg height={h} width={w} fill="#00000022" >
           <Path d={path} stroke="black" />
         </Svg>
-        <TouchableWithoutFeedback
-          onPress={this.onPress}
-        >
-          <View
-            style={{
-              width: '100%',
-              height: '100%',
-            }}
-          >
-            {children}
-          </View>
-        </TouchableWithoutFeedback>
-
         {isDisabled ? null : this.renderConnectors()}
-
       </View>
     );
   }
