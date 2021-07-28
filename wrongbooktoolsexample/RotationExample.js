@@ -124,13 +124,9 @@ const Styles = StyleSheet.create({
     borderWidth:1,    
     borderColor:"#00FF00"
   },
-  toolbar : {
-    position:'absolute',
-    zIndex: -100,    
+  toolbar : {    
     height: 100,
-    width: 150,
-    bottom:0,
-    left:0,        
+    width: 150,    
     justifyContent:"center",
     alignItems:"center",        
   },
