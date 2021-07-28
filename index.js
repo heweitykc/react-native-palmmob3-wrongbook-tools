@@ -6,6 +6,7 @@ import { NativeModules } from 'react-native';
 
 import TestPaper from './src/questioncuter/TestPaper';
 import TestComponent from './src/questioncuter/TestComponent';
+import RotationExample from './src/RotationExample';
 
 // export default Palmmob3WrongbookTools;
 
@@ -292,5 +293,5 @@ RNSketchCanvas.LIBRARY = SketchCanvas.LIBRARY;
 RNSketchCanvas.CACHES = SketchCanvas.CACHES;
 
 export {
-  SketchCanvas, TestPaper, TestComponent
+  SketchCanvas, TestPaper, TestComponent, RotationExample
 }

@@ -18,21 +18,41 @@
    Platform,
    Dimensions
  } from 'react-native';
-//  import { RNCamera } from 'react-native-camera';
 
-const deviceWidth = Dimensions.get('window').width;
-const deviceHeight = Dimensions.get('window').height;
+import { DragResizeBlock } from './dragable/DragResizeBlock'
+import { DragCutBlock } from './dragable/DragCutBlock'
 
-// let testpaper1 = require('./paper1.jpeg');
-// let testpaper1 = require('./testpaper1_zhai.jpg');
-let testpaper1 = require('./yiti.png');
- let info = Image.resolveAssetSource(testpaper1);
- console.log(info);
+import { 
+  CONNECTOR_TOP_LEFT,
+  CONNECTOR_TOP_MIDDLE,
+  CONNECTOR_TOP_RIGHT,
+  CONNECTOR_MIDDLE_RIGHT,
+  CONNECTOR_BOTTOM_RIGHT,
+  CONNECTOR_BOTTOM_MIDDLE,
+  CONNECTOR_BOTTOM_LEFT,
+  CONNECTOR_MIDDLE_LEFT,
+  CONNECTOR_CENTER,
+} from './dragable/Connector'
 
- let containerInfo = {
+ const containerInfo = {
    w:300,
    h:500,
  };
+
+ const connectors = [
+  CONNECTOR_TOP_LEFT,
+  CONNECTOR_TOP_RIGHT,
+  CONNECTOR_BOTTOM_LEFT,
+  CONNECTOR_BOTTOM_RIGHT,
+  CONNECTOR_CENTER
+];
+
+const cut_connectors = [
+  CONNECTOR_TOP_LEFT,
+  CONNECTOR_TOP_RIGHT,
+  CONNECTOR_BOTTOM_LEFT,
+  CONNECTOR_BOTTOM_RIGHT
+];
 
  const computePaperLayout = (zRotation, imgres, containerInfo) => {
   let imgInfo = Image.resolveAssetSource(imgres);
@@ -70,9 +90,23 @@ let testpaper1 = require('./yiti.png');
   return layout;
  }
 
- const App = () => {
+ const RotationExample = (props) => {
   
   const [pRotation, setpRotation] = useState(0);
+
+  const onDragEnd = (evt) => {
+      console.log(evt);
+      // if(props.onDragEnd !== null) {
+      //     props.onDragEnd(evt);
+      // }
+  };
+
+  const onResizeEnd = (info) => {
+      console.log(info);
+      // if(props.onResizeEnd !== null) {
+      //     props.onResizeEnd(info);
+      // }
+  };
 
   const onRotatePress = () => {
     console.log('onRotatePress');
@@ -80,15 +114,34 @@ let testpaper1 = require('./yiti.png');
   };
   
   let rotateStr = pRotation + 'deg';
-  let img_rect = computePaperLayout(pRotation, testpaper1, containerInfo);
+  let img_rect = computePaperLayout(pRotation, props.paperBg, containerInfo);
   let img_x = img_rect.x;
   let img_y = img_rect.y;
+
+  let limitation1 = {x:0,y:0,w:img_rect.w,h:img_rect.h};
+
+  console.log('limitation1=' , limitation1);
+
   return (
     <View style={Styles.bg} >
         <View style={Styles.imgcontainer} >
-          <ImageBackground source={testpaper1} resizeMode={'stretch'}
+          <ImageBackground source={props.paperBg} resizeMode={'stretch'}
             style={[Styles.imgbg, {width:img_rect.w, height:img_rect.h,  transform: [ {translateX:img_x}, {translateY:img_y}, { rotateZ: rotateStr }] }]}
           >
+
+          <DragCutBlock
+              x={0}
+              y={0}
+              w={img_rect.w}
+              h={100}
+              limitation={limitation1}
+              connectors={cut_connectors}
+              onDragEnd={onDragEnd}
+              onResizeEnd={onResizeEnd}
+              >
+
+          </DragCutBlock>
+
           </ImageBackground>
         </View>
         <View style={Styles.toolbar} >
@@ -138,4 +191,4 @@ const Styles = StyleSheet.create({
   },   
 });
 
-export default App;
+export default RotationExample;
