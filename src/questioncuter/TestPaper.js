@@ -83,6 +83,7 @@ const computePaperLayout = (props,containerInfo,imgInfo) => {
 };
 
 const TestPaper = (props) => {
+    
     const onDragEnd = (evt) => {
         console.log(evt);
         if(props.onDragEnd !== null) {
@@ -150,7 +151,7 @@ const TestPaper = (props) => {
                     connectors={connectors}
                     onDragEnd={onDragEnd}
                     onResizeEnd={onResizeEnd}
-                    >
+                >
                     <View style={testpaper_styles.kuang} />
                 </DragResizeBlock>
             </DragResizeContainer>

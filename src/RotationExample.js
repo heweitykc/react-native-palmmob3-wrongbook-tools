@@ -34,6 +34,8 @@ import {
   CONNECTOR_CENTER,
 } from './dragable/Connector'
 
+const CONNECTOR_SIZE = 30;
+
  const containerInfo = {
    w:300,
    h:500,
@@ -49,9 +51,9 @@ import {
 
 const cut_connectors = [
   CONNECTOR_TOP_LEFT,
-  CONNECTOR_TOP_RIGHT,
-  CONNECTOR_BOTTOM_LEFT,
-  CONNECTOR_BOTTOM_RIGHT
+  // CONNECTOR_TOP_RIGHT,
+  // CONNECTOR_BOTTOM_LEFT,
+  // CONNECTOR_BOTTOM_RIGHT
 ];
 
  const computePaperLayout = (zRotation, imgres, containerInfo) => {
@@ -118,9 +120,7 @@ const cut_connectors = [
   let img_x = img_rect.x;
   let img_y = img_rect.y;
 
-  let limitation1 = {x:0,y:0,w:img_rect.w,h:img_rect.h};
-
-  console.log('limitation1=' , limitation1);
+  let limitation1 = {x:0, y:0, w:img_rect.w, h:img_rect.h};
 
   return (
     <View style={Styles.bg} >
@@ -136,10 +136,10 @@ const cut_connectors = [
               h={100}
               limitation={limitation1}
               connectors={cut_connectors}
-              onDragEnd={onDragEnd}
-              onResizeEnd={onResizeEnd}
-              >
-
+              // onDragEnd={onDragEnd}
+              // onResizeEnd={onResizeEnd}
+              connector_size={CONNECTOR_SIZE}
+          >
           </DragCutBlock>
 
           </ImageBackground>
@@ -158,7 +158,7 @@ const cut_connectors = [
 const Styles = StyleSheet.create({
   bg: {
     flex:1,
-    backgroundColor:'#000000',
+    backgroundColor:'#AAAAAA',
     justifyContent:"center",
     alignItems:"center",     
   },

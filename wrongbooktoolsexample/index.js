@@ -12,6 +12,7 @@ import App from './TestScene';
 // import App from './CameraMLKitExample';
 // import App from './SvgExample';
 // import App from './RotationExample';
+// import App from './PanExample';
 
 import {name as appName} from './app.json';
 

@@ -8,19 +8,20 @@ import PropTypes from 'prop-types';
 import Svg, {Path} from 'react-native-svg';
 
 import {
-  Connector,
   CONNECTOR_TOP_LEFT,  
   CONNECTOR_TOP_RIGHT,  
   CONNECTOR_BOTTOM_RIGHT,  
   CONNECTOR_BOTTOM_LEFT  
 } from './Connector';
 
+import {
+  RoundConnector,
+} from './RoundConnector';
+
 export const AXIS_X = 'x';
 export const AXIS_Y = 'y';
 export const AXIS_ALL = 'all';
 
-const CONNECTOR_SIZE = 30;
-const CONNECTOR_DRAG_SIZE = 40;
 const DEFAULT_Z_INDEX = 1;
 
 /**
@@ -38,6 +39,7 @@ export class DragCutBlock extends Component {
       h,
       minW,
       minH,
+      connector_size,
     } = props;
 
     this.state = {
@@ -73,7 +75,7 @@ export class DragCutBlock extends Component {
      */
     this.connectorsMap[CONNECTOR_TOP_RIGHT] = {
       calculateX: (width) => {
-        return width - CONNECTOR_SIZE;
+        return width - connector_size;
       },
       calculateY: (height) => {
         return 0;
@@ -89,10 +91,10 @@ export class DragCutBlock extends Component {
      */
     this.connectorsMap[CONNECTOR_BOTTOM_RIGHT] = {
       calculateX: (width) => {
-        return width - CONNECTOR_SIZE;
+        return width - connector_size;
       },
       calculateY: (height) => {
-        return height - CONNECTOR_SIZE;
+        return height - connector_size;
       },
       onStart: this.onResizeStart,
       onMove: this.onResizeBR,
@@ -107,7 +109,7 @@ export class DragCutBlock extends Component {
         return 0;
       },
       calculateY: (height) => {
-        return height - CONNECTOR_SIZE;
+        return height - connector_size;
       },
       onStart: this.onResizeStart,
       onMove: this.onResizeBL,
@@ -429,6 +431,7 @@ export class DragCutBlock extends Component {
   renderConnectors = () => {
     const {
       connectors,
+      connector_size
     } = this.props;
 
     const {
@@ -438,10 +441,10 @@ export class DragCutBlock extends Component {
 
     return connectors.map((connectorType) => {
 
-      let csize = CONNECTOR_SIZE;
+      let csize = connector_size;
 
       return (
-        <Connector
+        <RoundConnector
           key={connectorType}
           type={connectorType}
           size={csize}
@@ -460,6 +463,7 @@ export class DragCutBlock extends Component {
       children,
       isDisabled,
       zIndex,
+      connector_size,
     } = this.props;
 
     const {
@@ -470,8 +474,8 @@ export class DragCutBlock extends Component {
       isSelected,
     } = this.state;
 
-    let path_w = w - CONNECTOR_SIZE;
-    let path_h = h - CONNECTOR_SIZE;
+    let path_w = w - connector_size;
+    let path_h = h - connector_size;
     let path = "M 0 0 L "+ path_w +" 0  L "+ path_w +" "+ path_h +" L 0 "+ path_h +" L 0 0";
 
     return (
@@ -482,7 +486,7 @@ export class DragCutBlock extends Component {
           top: y,
           width: w,
           height: h,
-          padding: CONNECTOR_SIZE / 2,
+          padding: connector_size / 2,
           zIndex: isSelected ? zIndex + 1 : zIndex,
         }}
       >
