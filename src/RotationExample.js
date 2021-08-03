@@ -20,7 +20,7 @@
  } from 'react-native';
 
 import { DragResizeBlock } from './dragable/DragResizeBlock'
-import { DragCutBlock } from './dragable/DragCutBlock'
+import { Utils } from './Utils'
 
 import { 
   CONNECTOR_TOP_LEFT,
@@ -56,42 +56,6 @@ const cut_connectors = [
   // CONNECTOR_BOTTOM_RIGHT
 ];
 
- const computePaperLayout = (zRotation, imgres, containerInfo) => {
-  let imgInfo = Image.resolveAssetSource(imgres);
-  let layout = {w:0,h:0,x:0,y:0};
-
-  let container_ratio = containerInfo.w / containerInfo.h;
-
-  if(zRotation % 180 === 0){  //竖排
-      let img_ratio = imgInfo.width / imgInfo.height;
-      if(container_ratio >= img_ratio){
-          console.log('1');
-          layout.h = containerInfo.h;
-          layout.w = layout.h * img_ratio;              
-      } else {
-          console.log('2');
-          layout.w = containerInfo.w;
-          layout.h = layout.w / img_ratio; 
-      }
-  } else {                        //横排      
-      let img_ratio = imgInfo.height / imgInfo.width;  
-      if(container_ratio < img_ratio){
-          console.log('3');
-          layout.h = containerInfo.w;
-          layout.w = layout.h / img_ratio;               
-      } else {
-          console.log('4');
-          layout.w = containerInfo.h;
-          layout.h = layout.w * img_ratio;
-      }
-  }
-  layout.w = parseInt(layout.w);
-  layout.h = parseInt(layout.h);
-  layout.x = parseInt((containerInfo.w - layout.w)*0.5);
-  layout.y = parseInt((containerInfo.h - layout.h)*0.5);  
-  return layout;
- }
-
  const RotationExample = (props) => {
   
   const [pRotation, setpRotation] = useState(0);
@@ -116,7 +80,7 @@ const cut_connectors = [
   };
   
   let rotateStr = pRotation + 'deg';
-  let img_rect = computePaperLayout(pRotation, props.paperBg, containerInfo);
+  let img_rect = Utils.computePaperLayout(pRotation, props.paperBg, containerInfo);
   let img_x = img_rect.x;
   let img_y = img_rect.y;
 
@@ -129,7 +93,7 @@ const cut_connectors = [
             style={[Styles.imgbg, {width:img_rect.w, height:img_rect.h,  transform: [ {translateX:img_x}, {translateY:img_y}, { rotateZ: rotateStr }] }]}
           >
 
-          <DragCutBlock
+          <DragResizeBlock
               x={0}
               y={0}
               w={img_rect.w}
@@ -140,7 +104,7 @@ const cut_connectors = [
               // onResizeEnd={onResizeEnd}
               connector_size={CONNECTOR_SIZE}
           >
-          </DragCutBlock>
+          </DragResizeBlock>
 
           </ImageBackground>
         </View>
@@ -165,9 +129,9 @@ const Styles = StyleSheet.create({
   imgcontainer: {
     backgroundColor:'#FFFFFF',
     justifyContent:"center",
-    alignItems:"center",     
+    alignItems:"center",
     height: containerInfo.h,
-    width: containerInfo.w,    
+    width: containerInfo.w,
   },  
   imgbg: {
     position:'absolute',
@@ -181,7 +145,7 @@ const Styles = StyleSheet.create({
     height: 100,
     width: 150,    
     justifyContent:"center",
-    alignItems:"center",        
+    alignItems:"center",
   },
   toolbar_rotate: {
       fontSize:50,

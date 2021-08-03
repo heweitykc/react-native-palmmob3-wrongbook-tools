@@ -7,11 +7,12 @@ import {  RotationExample, PanExample } from 'react-native-palmmob3-wrongbook-to
 let testpaper1 = require('./paper1.jpeg');
 // let testpaper1 = require('./testpaper1_zhai.jpg');
 // let testpaper1 = require('./yiti.png');
+// let testpaper1 = {uri:"http://3.palmmob.com/testres/paper1.jpeg"};
 
 const App = () => {
   return (
     // <RotationExample paperBg={testpaper1}  />
-    <PanExample paperBg={testpaper1}  />
+    <PanExample paperBg={testpaper1} w={300} h={500}  />
   );
 };
 

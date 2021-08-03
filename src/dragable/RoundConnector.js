@@ -7,9 +7,13 @@ class RoundConnector extends Component {
   pan = new Animated.ValueXY();
 
   panResponder = PanResponder.create({
-    onMoveShouldSetPanResponder: () => true,
+    onMoveShouldSetPanResponder: (evt, gestureState) => { console.log("onMoveShouldSetPanResponder"); return true; },
+    onStartShouldSetPanResponder: (evt, gestureState) => { console.log("onStartShouldSetPanResponder"); return true; },
+    onStartShouldSetPanResponderCapture: (evt, gestureState) => { console.log("onStartShouldSetPanResponderCapture"); return true; },
+    onMoveShouldSetPanResponderCapture: (evt, gestureState) => { console.log("onMoveShouldSetPanResponderCapture"); return true; },
 
     onPanResponderGrant: () => {
+      console.log("onPanResponderGrant");
       this.pan.setOffset({
         x: this.pan.x._value,
         y: this.pan.y._value
@@ -19,7 +23,7 @@ class RoundConnector extends Component {
     onPanResponderMove: (evt, gestureState) => {
       console.log("onPanResponderMove=", gestureState);
       let newPos = {x : gestureState.dx, y : gestureState.dy};              
-      this.pan.setValue(newPos);      
+      this.pan.setValue(newPos);
     },
 
     onPanResponderRelease: () => {
@@ -49,53 +53,6 @@ class RoundConnector extends Component {
     );
   }
 }
-/* 
-const RoundConnector = (props) => {
-  const pan = useRef(new Animated.ValueXY({x:props.startPos.x, y:props.startPos.y})).current;
-
-  const panResponder = useRef(
-    PanResponder.create({
-      onStartShouldSetPanResponder: (event, gestureState) => true,
-      onStartShouldSetPanResponderCapture: (event, gestureState) => true,
-      onMoveShouldSetPanResponder: (event, gestureState) => true,
-      onMoveShouldSetPanResponderCapture: (event, gestureState) => true,
-
-      onPanResponderGrant: (event, gestureState) => {
-        console.log("onPanResponderGrant=");
-        pan.setOffset({
-          x: pan.x._value,
-          y: pan.y._value
-        });
-      },
-
-      onPanResponderMove: (evt, gestureState) => {
-        console.log("onPanResponderMove=", gestureState);
-        let newPos = {x : gestureState.dx, y : gestureState.dy};        
-        props.onMove({
-          x: gestureState.dx - pan.x._value,
-          y: gestureState.dy - pan.y._value,
-        });
-        pan.setValue(newPos);
-      },
-
-      onPanResponderRelease: () => {
-        pan.flattenOffset();
-      }
-    })
-  ).current;
-
-  return (
-      <Animated.View
-        style={[ styles.containter, {
-          transform: pan.getTranslateTransform()
-        }]}
-        {...panResponder.panHandlers}
-      >
-        <View style={styles.box} ><Text>{props.title}</Text></View>
-      </Animated.View>
-  );
-}
-*/
 
 const styles = StyleSheet.create({
   containter: {
@@ -106,7 +63,7 @@ const styles = StyleSheet.create({
     width: 100,        
     justifyContent:"center",
     alignItems:"center",
-    backgroundColor:'#00000044'
+    backgroundColor:'#00000000'
   },
   box: {
     height: 30,
