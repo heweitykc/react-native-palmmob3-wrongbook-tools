@@ -21,17 +21,19 @@ class DragCutBlock extends React.Component {
   }
 
   initPos = (props) => {
+    console.log(props);
     this.startp1 = {x:0,y:0};
     this.startp2 = {x:props.w,y:0};
     this.startp3 = {x:0,y:props.h};
     this.startp4 = {x:props.w,y:props.h};    
-    this.imageSize = Image.resolveAssetSource(props.paperBg);
+    // this.imageSize = props.imageSize;
+    // this.imageSize = Image.resolveAssetSource(props.paperBg);
   }
 
   onMove1 = (pos) => {
     console.log(pos); 
     this.setState({point1:{x: pos.x,  y: pos.y}}, ()=>{
-      this.onMoveCallback();     
+      this.onMoveCallback();
     });
   };
 
@@ -57,8 +59,8 @@ class DragCutBlock extends React.Component {
   };
 
   onMoveCallback = () => {
-    let wScaleRatio = this.imageSize.width / this.props.w;
-    let hScaleRatio = this.imageSize.height / this.props.h;
+    let wScaleRatio = this.props.imageSize.width / this.props.w;
+    let hScaleRatio = this.props.imageSize.height / this.props.h;
     let posdata = [
       {x:parseInt(this.state.point1.x * wScaleRatio), y:parseInt(this.state.point1.y * hScaleRatio)},
       {x:parseInt(this.state.point2.x * wScaleRatio), y:parseInt(this.state.point2.y * hScaleRatio)},
@@ -68,11 +70,15 @@ class DragCutBlock extends React.Component {
     this.props.onMove(posdata);
   }
 
-  render() {
+  render() {    
+    if(!this.props.imageSize){
+      return null;
+    }
+    console.log(this.props.imageSize);
     let pRotation = 0;
     let rotateStr = pRotation + 'deg';
     let containerInfo = { w:this.props.w, h:this.props.h};
-    let img_rect = Utils.computePaperLayout(pRotation, this.imageSize, containerInfo);
+    let img_rect = Utils.computePaperLayout(pRotation, this.props.imageSize, containerInfo);
     let path = `M ${this.state.point1.x} ${this.state.point1.y} L ${this.state.point2.x} ${this.state.point2.y} L ${this.state.point4.x} ${this.state.point4.y} L ${this.state.point3.x} ${this.state.point3.y} L ${this.state.point1.x} ${this.state.point1.y} `;
     return (
         <ImageBackground source={this.props.paperBg} resizeMode={'stretch'} 

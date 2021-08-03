@@ -20,7 +20,11 @@ class PanExample extends React.Component {
   render() {
     return (
       <View style={{flex:1, alignItems:"center", justifyContent:"center", backgroundColor:'#CCCC00'}} >
-        <DragCutBlock w={this.props.w} h={this.props.h} paperBg={this.props.paperBg} onMove={this.onMove.bind(this)} />
+        <DragCutBlock 
+          w={this.props.w} h={this.props.h} 
+          paperBg={this.props.paperBg} onMove={this.onMove.bind(this)} 
+          imageSize={this.props.imageSize} 
+        />
         <TouchableOpacity onPress={this.toggleFacing.bind(this)}>
           <Text>校正</Text>
         </TouchableOpacity>
