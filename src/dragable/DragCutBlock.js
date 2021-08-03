@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet, ImageBackground } from "react-native";
+import { View, StyleSheet, ImageBackground, Image } from "react-native";
 
 import { RoundConnector } from './RoundConnector'
 import { Utils } from '../Utils'
@@ -23,41 +23,60 @@ class DragCutBlock extends React.Component {
   initPos = (props) => {
     this.startp1 = {x:0,y:0};
     this.startp2 = {x:props.w,y:0};
-    this.startp3 = {x:props.w,y:props.h};
-    this.startp4 = {x:0,y:props.h};
+    this.startp3 = {x:0,y:props.h};
+    this.startp4 = {x:props.w,y:props.h};    
+    this.imageSize = Image.resolveAssetSource(props.paperBg);
   }
 
   onMove1 = (pos) => {
     console.log(pos); 
-    this.setState({point1:{x: pos.x,  y: pos.y}});
+    this.setState({point1:{x: pos.x,  y: pos.y}}, ()=>{
+      this.onMoveCallback();     
+    });
   };
 
   onMove2 = (pos) => {
     console.log(pos);
-    this.setState({point2:{x: pos.x,  y: pos.y}});
+    this.setState({point2:{x: pos.x,  y: pos.y}}, ()=>{
+      this.onMoveCallback();     
+    });
   };
 
   onMove3 = (pos) => {
     console.log(pos);
-    this.setState({point3:{x: pos.x,  y: pos.y}});
+    this.setState({point3:{x: pos.x,  y: pos.y}}, ()=>{
+      this.onMoveCallback();     
+    });
   };
 
   onMove4 = (pos) => {
     console.log(pos);
-    this.setState({point4:{x: pos.x,  y: pos.y}});
+    this.setState({point4:{x: pos.x,  y: pos.y}}, ()=>{
+      this.onMoveCallback();     
+    });
   };
+
+  onMoveCallback = () => {
+    let wScaleRatio = this.imageSize.width / this.props.w;
+    let hScaleRatio = this.imageSize.height / this.props.h;
+    let posdata = [
+      {x:parseInt(this.state.point1.x * wScaleRatio), y:parseInt(this.state.point1.y * hScaleRatio)},
+      {x:parseInt(this.state.point2.x * wScaleRatio), y:parseInt(this.state.point2.y * hScaleRatio)},
+      {x:parseInt(this.state.point3.x * wScaleRatio), y:parseInt(this.state.point3.y * hScaleRatio)},
+      {x:parseInt(this.state.point4.x * wScaleRatio), y:parseInt(this.state.point4.y * hScaleRatio)},
+    ];
+    this.props.onMove(posdata);
+  }
 
   render() {
     let pRotation = 0;
     let rotateStr = pRotation + 'deg';
     let containerInfo = { w:this.props.w, h:this.props.h};
-    let img_rect = Utils.computePaperLayout(pRotation, this.props.paperBg, containerInfo);
-    let path = `M ${this.state.point1.x} ${this.state.point1.y} L ${this.state.point2.x} ${this.state.point2.y} L ${this.state.point3.x} ${this.state.point3.y} L ${this.state.point4.x} ${this.state.point4.y} L ${this.state.point1.x} ${this.state.point1.y} `;
-    console.log(path);
-    console.log(img_rect);
+    let img_rect = Utils.computePaperLayout(pRotation, this.imageSize, containerInfo);
+    let path = `M ${this.state.point1.x} ${this.state.point1.y} L ${this.state.point2.x} ${this.state.point2.y} L ${this.state.point4.x} ${this.state.point4.y} L ${this.state.point3.x} ${this.state.point3.y} L ${this.state.point1.x} ${this.state.point1.y} `;
     return (
         <ImageBackground source={this.props.paperBg} resizeMode={'stretch'} 
-            style={[styles.imgbg, {width:this.props.w, height:this.props.h,  transform: [ {translateX:img_rect.x}, {translateY:img_rect.y}, { rotateZ: rotateStr }] }]}
+            style={[styles.imgbg, {width:this.props.w, height:this.props.h }]}
         >
           <Svg width={this.props.w} height={this.props.h} fill="#0000FF33" >
             <Path d={path} stroke="#0000FF33" />

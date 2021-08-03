@@ -63,12 +63,12 @@ const styles = StyleSheet.create({
     width: 100,        
     justifyContent:"center",
     alignItems:"center",
-    backgroundColor:'#00000000'
+    backgroundColor:'#00000099'
   },
   box: {
     height: 30,
     width: 30,
-    backgroundColor: "yellow",
+    backgroundColor: "#FFFF00AA",
     borderRadius: 15,
     justifyContent:"center",
     alignItems:"center"

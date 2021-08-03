@@ -4,7 +4,8 @@ import {  TestPaper,TestComponent } from 'react-native-palmmob3-wrongbook-tools'
 
 import {  RotationExample, PanExample } from 'react-native-palmmob3-wrongbook-tools';
 
-let testpaper1 = require('./paper1.jpeg');
+let testpaper1 = require('./demo1.jpg');
+// let testpaper1 = require('./paper1.jpeg');
 // let testpaper1 = require('./testpaper1_zhai.jpg');
 // let testpaper1 = require('./yiti.png');
 // let testpaper1 = {uri:"http://3.palmmob.com/testres/paper1.jpeg"};

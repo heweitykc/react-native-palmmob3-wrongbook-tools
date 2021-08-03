@@ -1,16 +1,13 @@
 
-import {Image } from 'react-native';
-
 class Utils {
 
-    static computePaperLayout(zRotation, imgres, containerInfo) {
-        let imgInfo = Image.resolveAssetSource(imgres);
+    static computePaperLayout(zRotation, imageSize, containerInfo) {
         let layout = {w:0,h:0,x:0,y:0};
       
         let container_ratio = containerInfo.w / containerInfo.h;
       
         if(zRotation % 180 === 0){  //竖排
-            let img_ratio = imgInfo.width / imgInfo.height;
+            let img_ratio = imageSize.width / imageSize.height;
             if(container_ratio >= img_ratio){
                 console.log('1');
                 layout.h = containerInfo.h;
@@ -21,7 +18,7 @@ class Utils {
                 layout.h = layout.w / img_ratio; 
             }
         } else {                        //横排      
-            let img_ratio = imgInfo.height / imgInfo.width;  
+            let img_ratio = imageSize.height / imageSize.width;  
             if(container_ratio < img_ratio){
                 console.log('3');
                 layout.h = containerInfo.w;
