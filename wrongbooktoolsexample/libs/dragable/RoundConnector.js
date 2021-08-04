@@ -25,6 +25,13 @@ class RoundConnector extends Component {
     onPanResponderMove: (evt, gestureState) => {
       console.log("onPanResponderMove=", gestureState);
       let newPos = {x : gestureState.dx, y : gestureState.dy};
+      if(this.props.rotation == 90){
+        newPos = {x : gestureState.dy, y : gestureState.dx * -1};
+      } else if(this.props.rotation == 180){
+        newPos = {x : gestureState.dx * -1, y : gestureState.dy * -1};
+      } else if(this.props.rotation == 270){
+        newPos = {x : gestureState.dy * -1, y : gestureState.dx};
+      }
       this.panValue.setValue(newPos);
     },
 

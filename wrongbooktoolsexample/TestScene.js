@@ -2,7 +2,7 @@ import React, { Component,PureComponent,useState } from 'react';
 import { Platform, StyleSheet, Text, View,TouchableOpacity } from 'react-native';
 
 // import {  RotationExample, PanExample } from 'react-native-palmmob3-wrongbook-tools';
-import PanExample from "./libs/PanExample"
+import WarpPerspective from "./libs/WarpPerspective"
 // import RotationExample from "./libs/RotationExample"
 import {launchImageLibrary } from 'react-native-image-picker';
 
@@ -15,6 +15,11 @@ let testpaper1 = require('./demo1.jpg');
 const App = () => {
   const [imgUri,  setImgUri] = useState(null);
   const [imgSize, setImgSize] = useState(null);
+  const [imgRotation, setImgRotation] = useState(90);
+
+  const rotateImg = () => {
+    setImgRotation(imgRotation+90);
+  }
 
   const selectByAlbum = () => {
     let opt = {
@@ -24,24 +29,30 @@ const App = () => {
         maxWidth: 1080,
         includeBase64:false,
     }
-    launchImageLibrary(opt, (res) => {                
+    
+    launchImageLibrary(opt, (res) => {       
+        if(!res.assets) {
+          return;
+        }         
         let imginfo = res.assets[0];
         console.log(imginfo);
-        setImgUri(imginfo.uri);
         setImgSize({width:imginfo.width, height:imginfo.height});
+        setImgUri(imginfo.uri);        
     })
   }
 
   return (
     // <RotationExample paperBg={testpaper1}  />
-    <View style={{flex:1,backgroundColor:'#888888'}} >
+    <View style={{flex:1,alignItems:"center", justifyContent:"center",backgroundColor:'#888888'}} >
       <TouchableOpacity onPress={selectByAlbum}>
         <Text style={{ alignSelf: 'center', marginTop: 55, fontSize: 18 }}>选取相册</Text>
       </TouchableOpacity>  
-      {/* <PanExample paperBg={testpaper1} w={300} h={500}  /> */}
       {imgUri &&
-        <PanExample paperBg={{uri:imgUri}} w={300} h={500} imageSize={imgSize}  />
+        <WarpPerspective imgRotation={imgRotation} paperBg={{uri:imgUri}} w={300} h={500} imageSize={imgSize}  />
       }
+      <TouchableOpacity onPress={rotateImg}>
+        <Text style={{ alignSelf: 'center', marginTop: 55, fontSize: 18 }}>旋转图片</Text>
+      </TouchableOpacity>        
     </View>    
   );
 };

@@ -2,7 +2,6 @@ import React from "react";
 import { View, StyleSheet, ImageBackground, Image } from "react-native";
 
 import { RoundConnector } from './RoundConnector'
-import { Utils } from '../Utils'
 import Svg, {Path} from 'react-native-svg';
 
 class DragCutBlock extends React.Component {
@@ -23,9 +22,9 @@ class DragCutBlock extends React.Component {
   initPos = (props) => {
     console.log(props);
     this.startp1 = {x:0,y:0};
-    this.startp2 = {x:props.w,y:0};
-    this.startp3 = {x:0,y:props.h};
-    this.startp4 = {x:props.w,y:props.h};    
+    this.startp2 = {x:props.imageRect.w,  y:0};
+    this.startp3 = {x:0,  y:props.imageRect.h};
+    this.startp4 = {x:props.imageRect.w,  y:props.imageRect.h};    
   }
 
   onMove1 = (pos, isDriving) => {
@@ -73,8 +72,8 @@ class DragCutBlock extends React.Component {
   };
 
   onMoveCallback = () => {
-    let wScaleRatio = this.props.imageSize.width / this.props.w;
-    let hScaleRatio = this.props.imageSize.height / this.props.h;
+    let wScaleRatio = this.props.imageSize.width / this.props.imageRect.w;
+    let hScaleRatio = this.props.imageSize.height / this.props.imageRect.h;
     let posdata = [
       {x:parseInt(this.state.point1.x * wScaleRatio), y:parseInt(this.state.point1.y * hScaleRatio)},
       {x:parseInt(this.state.point2.x * wScaleRatio), y:parseInt(this.state.point2.y * hScaleRatio)},
@@ -84,23 +83,35 @@ class DragCutBlock extends React.Component {
     this.props.onMove(posdata);
   }
 
-  render() {    
-    if(!this.props.imageSize){
+  render() {
+    if(!this.props.imageRect){
       return null;
     }
-    console.log(this.props.imageSize);
+    // console.log(this.props.imageRect);
+    let rotateStr = this.props.imageRotation + 'deg';
+    let img_rect = this.props.imageRect; 
+    // console.log(this.startp1);
+    // console.log(this.startp2);
+    // console.log(this.startp3);
+    // console.log(this.startp4);
     let path = `M ${this.state.point1.x} ${this.state.point1.y} L ${this.state.point2.x} ${this.state.point2.y} L ${this.state.point4.x} ${this.state.point4.y} L ${this.state.point3.x} ${this.state.point3.y} L ${this.state.point1.x} ${this.state.point1.y} `;
     return (
         <ImageBackground source={this.props.paperBg} resizeMode={'stretch'} 
-            style={[styles.imgbg, {width:this.props.w, height:this.props.h }]}
+            style={[
+                styles.imgbg, 
+                {
+                  width:img_rect.w, height:img_rect.h,
+                  transform: [ {translateX:img_rect.x}, {translateY:img_rect.y}, { rotateZ: rotateStr }]
+                }
+            ]}
         >
-          <Svg width={this.props.w} height={this.props.h} fill="#0000FF33" >
+          <Svg width={img_rect.w} height={img_rect.h} fill="#0000FF33" >
             <Path d={path} stroke="#0000FF33" />
           </Svg>
-          <RoundConnector  ref={(ref) => { this.connector1 = ref }}  onMove={this.onMove1.bind(this)}  title={"1"} startPos={this.startp1} />
-          <RoundConnector  ref={(ref) => { this.connector2 = ref }} onMove={this.onMove2.bind(this)}  title={"2"} startPos={this.startp2} />
-          <RoundConnector  ref={(ref) => { this.connector3 = ref }} onMove={this.onMove3.bind(this)}  title={"3"} startPos={this.startp3} />
-          <RoundConnector  ref={(ref) => { this.connector4 = ref }} onMove={this.onMove4.bind(this)}  title={"4"} startPos={this.startp4} />
+          <RoundConnector  ref={(ref) => { this.connector1 = ref }} rotation={this.props.imageRotation} onMove={this.onMove1.bind(this)}  title={"1"} startPos={this.startp1} />
+          <RoundConnector  ref={(ref) => { this.connector2 = ref }} rotation={this.props.imageRotation} onMove={this.onMove2.bind(this)}  title={"2"} startPos={this.startp2} />
+          <RoundConnector  ref={(ref) => { this.connector3 = ref }} rotation={this.props.imageRotation} onMove={this.onMove3.bind(this)}  title={"3"} startPos={this.startp3} />
+          <RoundConnector  ref={(ref) => { this.connector4 = ref }} rotation={this.props.imageRotation} onMove={this.onMove4.bind(this)}  title={"4"} startPos={this.startp4} />
         </ImageBackground>
     );
   }
