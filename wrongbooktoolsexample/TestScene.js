@@ -1,8 +1,9 @@
 import React, { Component,PureComponent,useState } from 'react';
 import { Platform, StyleSheet, Text, View,TouchableOpacity } from 'react-native';
-import {  TestPaper,TestComponent } from 'react-native-palmmob3-wrongbook-tools';
 
-import {  RotationExample, PanExample } from 'react-native-palmmob3-wrongbook-tools';
+// import {  RotationExample, PanExample } from 'react-native-palmmob3-wrongbook-tools';
+import PanExample from "./libs/PanExample"
+// import RotationExample from "./libs/RotationExample"
 import {launchImageLibrary } from 'react-native-image-picker';
 
 let testpaper1 = require('./demo1.jpg');
@@ -33,9 +34,9 @@ const App = () => {
 
   return (
     // <RotationExample paperBg={testpaper1}  />
-    <View style={{flex:1}} >
+    <View style={{flex:1,backgroundColor:'#888888'}} >
       <TouchableOpacity onPress={selectByAlbum}>
-        <Text style={{ alignSelf: 'center', marginTop: 15, fontSize: 18 }}>选取相册</Text>
+        <Text style={{ alignSelf: 'center', marginTop: 55, fontSize: 18 }}>选取相册</Text>
       </TouchableOpacity>  
       {/* <PanExample paperBg={testpaper1} w={300} h={500}  /> */}
       {imgUri &&

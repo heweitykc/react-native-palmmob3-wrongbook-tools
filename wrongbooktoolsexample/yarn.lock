@@ -5460,10 +5460,6 @@ react-native-keyboard-aware-scroll-view@0.9.1:
     prop-types "^15.6.2"
     react-native-iphone-x-helper "^1.0.3"
 
-"react-native-palmmob3-wrongbook-tools@link:..":
-  version "0.0.0"
-  uid ""
-
 react-native-safe-area-view@^0.14.9:
   version "0.14.9"
   resolved "https://registry.npmjs.org/react-native-safe-area-view/-/react-native-safe-area-view-0.14.9.tgz#90ee8383037010d9a5055a97cf97e4c1da1f0c3d"
