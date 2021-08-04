@@ -18,7 +18,7 @@ const App = () => {
   const [imgRotation, setImgRotation] = useState(90);
 
   const rotateImg = () => {
-    setImgRotation(imgRotation+90);
+    setImgRotation((imgRotation+90)%360);
   }
 
   const selectByAlbum = () => {
