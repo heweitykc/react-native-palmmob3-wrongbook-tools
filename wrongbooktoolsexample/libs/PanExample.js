@@ -21,6 +21,7 @@ class PanExample extends React.Component {
     return (
       <View style={{flex:1, alignItems:"center", justifyContent:"center", backgroundColor:'#CCCC00'}} >
         <DragCutBlock 
+          regular={true}
           w={this.props.w} h={this.props.h} 
           paperBg={this.props.paperBg} onMove={this.onMove.bind(this)} 
           imageSize={this.props.imageSize} 

@@ -4,7 +4,8 @@ import { Animated, View, StyleSheet, PanResponder, Text } from "react-native";
 
 class RoundConnector extends Component {
 
-  pan = new Animated.ValueXY();
+  panValue = new Animated.ValueXY();
+  isDriving = false;
 
   panResponder = PanResponder.create({
     onMoveShouldSetPanResponder: (evt, gestureState) => { console.log("onMoveShouldSetPanResponder"); return true; },
@@ -14,37 +15,54 @@ class RoundConnector extends Component {
 
     onPanResponderGrant: () => {
       console.log("onPanResponderGrant");
-      this.pan.setOffset({
-        x: this.pan.x._value,
-        y: this.pan.y._value
+      this.isDriving = true;
+      this.panValue.setOffset({
+        x: this.panValue.x._value,
+        y: this.panValue.y._value
       });
     },
 
     onPanResponderMove: (evt, gestureState) => {
       console.log("onPanResponderMove=", gestureState);
-      let newPos = {x : gestureState.dx, y : gestureState.dy};              
-      this.pan.setValue(newPos);
+      let newPos = {x : gestureState.dx, y : gestureState.dy};
+      this.panValue.setValue(newPos);
     },
 
     onPanResponderRelease: () => {
-      this.pan.flattenOffset();
+      this.panValue.flattenOffset();
+      this.isDriving = false;
     }
   });
 
   constructor(props) {
     super(props);
-    this.pan.setValue({x:props.startPos.x, y:props.startPos.y});
+    this.panValue.addListener((ret) => {
+      this.props.onMove(ret, this.isDriving);
+    });    
+    this.panValue.setValue({x:props.startPos.x, y:props.startPos.y});
+  }
 
-    this.pan.addListener((ret) => {
-      this.props.onMove(ret);
-    });
+  componentWillUnmount() {
+    this.panValue.removeAllListeners();
+  }
+
+  setPosX(x){
+    let newPos = {x : x, y : this.panValue.y._value};
+    this.isDriving = false;
+    this.panValue.setValue(newPos);
+  }
+
+  setPosY(y){
+    let newPos = {y : y, x : this.panValue.x._value};
+    this.isDriving = false;
+    this.panValue.setValue(newPos);
   }
 
   render() {
     return (
       <Animated.View
         style={[ styles.containter, {
-          transform: this.pan.getTranslateTransform()
+          transform: this.panValue.getTranslateTransform()
         }]}
         {...this.panResponder.panHandlers}
       >
