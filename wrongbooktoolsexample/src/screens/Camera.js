@@ -13,7 +13,7 @@ import Slider from '@react-native-community/slider';
 import _ from 'underscore';
 import { Container, Button, Text, Icon, Footer, FooterTab, Spinner, H2, connectStyle, Toast } from 'native-base';
 import { RNCamera } from 'react-native-camera';
-import {NavigationEvents} from 'react-navigation';
+// import {NavigationEvents} from 'react-navigation';
 
 import conf from '../conf';
 import {getOrientation} from '../baseComponents/orientation';
@@ -656,10 +656,10 @@ class Camera extends Component{
       <Container fullBlack>
 
         <KeyboardShiftView style={styles.content} keyboardShouldPersistTaps={'never'} extraHeight={0} bounces={false}>
-          <NavigationEvents
+          {/* <NavigationEvents
             onDidFocus={this.onDidFocus}
             onDidBlur={this.onDidBlur}
-          />
+          /> */}
 
           <View style={mainViewStyle}>
             <MainHeader
