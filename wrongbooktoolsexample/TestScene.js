@@ -17,6 +17,8 @@ const App = () => {
   const [imgSize, setImgSize] = useState(null);
   const [imgRotation, setImgRotation] = useState(0);
 
+  const DragSize = [150,50];
+
   const rotateImg = () => {
     setImgRotation((imgRotation+90)%360);
   }
@@ -30,7 +32,7 @@ const App = () => {
         includeBase64:false,
     }
     
-    launchImageLibrary(opt, (res) => {       
+    launchImageLibrary(opt, (res) => {
         if(!res.assets) {
           return;
         }         
@@ -48,7 +50,7 @@ const App = () => {
         <Text style={{ alignSelf: 'center', marginTop: 55, fontSize: 18 }}>选取相册</Text>
       </TouchableOpacity>  
       {imgUri &&
-        <WarpPerspective imgRotation={imgRotation} paperBg={{uri:imgUri}} w={300} h={500} imageSize={imgSize}  />
+        <WarpPerspective dragsize={DragSize} regular={false} imgRotation={imgRotation} paperBg={{uri:imgUri}} w={300} h={500} imageSize={imgSize}  />
       }
       <TouchableOpacity onPress={rotateImg}>
         <Text style={{ alignSelf: 'center', marginTop: 55, fontSize: 18 }}>旋转图片</Text>

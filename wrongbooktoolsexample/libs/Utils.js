@@ -35,6 +35,20 @@ class Utils {
         layout.y = parseInt((containerInfo.h - layout.h)*0.5);  
         return layout;
     }
+
+    static getCenter(poslist){
+        let total = poslist.length;
+        // console.log("total:",total);
+        let lat = 0, lon = 0;
+        for(let i=0;i<total;i++){
+            lat += poslist[i].x * Math.PI / 180;
+            lon += poslist[i].y * Math.PI / 180;
+        }
+        lat /= total;
+        lon /= total;
+        // console.log("lat:",lat,"lon:",lon);
+        return {x:parseInt(lat * 180 / Math.PI), y:parseInt(lon * 180 / Math.PI)};
+    }
 }
 
 export {

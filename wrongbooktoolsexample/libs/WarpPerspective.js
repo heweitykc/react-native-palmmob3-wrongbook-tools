@@ -23,8 +23,9 @@ class WarpPerspective extends React.Component {
     console.log("img_rect=",img_rect);
     return (
       <View style={{width:this.props.w, height:this.props.h, alignItems:"flex-start", justifyContent:"flex-start", backgroundColor:'#00FFFF'}} >
-        <DragCutBlock           
-          regular={true}
+        <DragCutBlock
+          dragsize={this.props.dragsize}
+          regular={this.props.regular}
           paperBg={this.props.paperBg} onMove={this.onMove.bind(this)} 
           imageSize={this.props.imageSize}
           imageRect={img_rect}

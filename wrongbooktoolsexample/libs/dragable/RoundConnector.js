@@ -8,10 +8,10 @@ class RoundConnector extends Component {
   isDriving = false;
 
   panResponder = PanResponder.create({
-    onMoveShouldSetPanResponder: (evt, gestureState) => { console.log("onMoveShouldSetPanResponder"); return true; },
-    onStartShouldSetPanResponder: (evt, gestureState) => { console.log("onStartShouldSetPanResponder"); return true; },
-    onStartShouldSetPanResponderCapture: (evt, gestureState) => { console.log("onStartShouldSetPanResponderCapture"); return true; },
-    onMoveShouldSetPanResponderCapture: (evt, gestureState) => { console.log("onMoveShouldSetPanResponderCapture"); return true; },
+    onMoveShouldSetPanResponder: (evt, gestureState) => { return true; },
+    onStartShouldSetPanResponder: (evt, gestureState) => { return true; },
+    onStartShouldSetPanResponderCapture: (evt, gestureState) => {  return true; },
+    onMoveShouldSetPanResponderCapture: (evt, gestureState) => { return true; },
 
     onPanResponderGrant: () => {
       this.isDriving = true;
@@ -19,8 +19,7 @@ class RoundConnector extends Component {
       this.props.onStartPan(true);
     },
 
-    onPanResponderMove: (evt, gestureState) => {
-      // console.log(this.props.title + " onPanResponderMove=", gestureState);
+    onPanResponderMove: (evt, gestureState) => {      
       let newPos = {x : gestureState.dx, y : gestureState.dy};
       if(this.props.rotation == 90){
         newPos = {x : gestureState.dy, y : gestureState.dx * -1};
@@ -43,6 +42,7 @@ class RoundConnector extends Component {
 
   constructor(props) {
     super(props);
+    
     this.panValue.addListener((ret) => {
       console.log(this.props.title + " ret = ",ret);
       this.props.onMove(ret, this.isDriving);
@@ -62,26 +62,37 @@ class RoundConnector extends Component {
     });
   }
 
+  movePan(dx, dy){
+    let newPos = {y : dy, x : dx};
+    this.isDriving = false;
+    this.panValue.setValue(newPos);
+  }
   releasePan(){
     console.log(this.props.title + " release pan");
     this.panValue.flattenOffset();
   }
 
-  setPan(dx, dy){
-    let newPos = {y : dy, x : dx};
-    this.isDriving = false;
-    this.panValue.setValue(newPos);
-  }
-
   render() {
+    let dragScope = this.props.dragsize[0];
+    let dragPoint = this.props.dragsize[1];
     return (
       <Animated.View
         style={[ styles.containter, {
+          top:   dragScope*-0.5,
+          left:  dragScope*-0.5,
+          height:dragScope,
+          width: dragScope,
+          borderRadius: dragScope*0.5,
           transform: this.panValue.getTranslateTransform()
         }]}
         {...this.panResponder.panHandlers}
       >
-        <View style={styles.box} ><Text>{this.props.title}</Text></View>
+        <View style={[styles.box, 
+          {
+            width:dragPoint, height:dragPoint, borderRadius:dragPoint*0.5 
+          }]} >
+            <Text>{this.props.title}</Text>
+        </View>
       </Animated.View>
     );
   }
@@ -90,18 +101,15 @@ class RoundConnector extends Component {
 const styles = StyleSheet.create({
   containter: {
     position:"absolute",
-    top:-50,
-    left:-50,
-    height: 100,
-    width: 100,        
+
     justifyContent:"center",
     alignItems:"center",
-    backgroundColor:'#00000099'
+    backgroundColor:'#00000044'
   },
   box: {
     height: 30,
     width: 30,
-    backgroundColor: "#FFFF00AA",
+    backgroundColor: "#FFFF0044",
     borderRadius: 15,
     justifyContent:"center",
     alignItems:"center"
