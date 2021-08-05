@@ -11,6 +11,7 @@ class DragCutBlock extends React.Component {
     this.initPos(props);
 
     this.state = {
+      point0:this.startp0,
       point1:this.startp1,
       point2:this.startp2,
       point3:this.startp3,
@@ -24,51 +25,157 @@ class DragCutBlock extends React.Component {
     this.startp1 = {x:0,y:0};
     this.startp2 = {x:props.imageRect.w,  y:0};
     this.startp3 = {x:0,  y:props.imageRect.h};
-    this.startp4 = {x:props.imageRect.w,  y:props.imageRect.h};    
+    this.startp4 = {x:props.imageRect.w,  y:props.imageRect.h};
+
+    this.startp0 = {x:props.imageRect.w*0.5,  y:props.imageRect.h*0.5};
   }
 
-  onMove1 = (pos, isDriving) => {
-    console.log(pos); 
-    this.setState({point1:{x: pos.x,  y: pos.y}}, ()=>{
+  onStartPan0 = (isDriving) => {
+    if(isDriving && this.props.regular){
+      this.connector1.startPan();
+      this.connector2.startPan();
+      this.connector3.startPan();
+      this.connector4.startPan();
+    }
+  }
+
+  onStartPan1 = (isDriving) => {
+    if(isDriving && this.props.regular){
+      this.connector2.startPan();
+      this.connector3.startPan();
+    }    
+  }
+  onStartPan2 = (isDriving) => {
+    if(isDriving && this.props.regular){
+      this.connector1.startPan();
+      this.connector4.startPan();
+    }
+  }
+  onStartPan3 = (isDriving) => {
+    if(isDriving && this.props.regular){
+      this.connector1.startPan();
+      this.connector4.startPan();
+    }
+  }
+  onStartPan4 = (isDriving) => {
+    if(isDriving && this.props.regular){
+      this.connector2.startPan();
+      this.connector3.startPan(); 
+    }
+  }
+
+  onMovePan0 = (pan, isDriving) => {
+    if(isDriving && this.props.regular){
+      this.connector1.setPan(pan.x, pan.y);
+      this.connector2.setPan(pan.x, pan.y);
+      this.connector3.setPan(pan.x, pan.y);
+      this.connector4.setPan(pan.x, pan.y);
+    }
+  }
+
+  onMovePan1 = (pan, isDriving) => {
+    if(isDriving && this.props.regular){
+      this.connector2.setPan(0, pan.y);
+      this.connector3.setPan(pan.x, 0);
+    }
+  }
+  
+  onMovePan2 = (pan, isDriving) => {
+    if(isDriving && this.props.regular){
+      this.connector1.setPan(0, pan.y);
+      this.connector4.setPan(pan.x, 0);
+    }
+  }
+
+  onMovePan3 = (pan, isDriving) => {
+    if(isDriving && this.props.regular){
+      this.connector1.setPan(pan.x,0 );
+      this.connector4.setPan(0, pan.y);
+    }
+  }
+  
+  onMovePan4 = (pan, isDriving) => {
+    if(isDriving && this.props.regular){
+      this.connector2.setPan(pan.x, 0);
+      this.connector3.setPan(0,pan.y);    
+    }
+  }
+  
+  onReleasePan0 = (isDriving) => {
+    if(isDriving && this.props.regular){
+      this.connector1.releasePan();
+      this.connector2.releasePan();
+      this.connector3.releasePan();
+      this.connector4.releasePan();
+    }
+  }
+
+  onReleasePan1 = (isDriving) => {
+    if(isDriving && this.props.regular){
+      this.connector2.releasePan();
+      this.connector3.releasePan();
+    }
+  }
+
+  onReleasePan2 = (isDriving) => {
+    if(isDriving && this.props.regular){
+      this.connector1.releasePan();
+      this.connector4.releasePan();
+    }
+  }
+
+  onReleasePan3 = (isDriving) => {
+    if(isDriving && this.props.regular){
+      this.connector1.releasePan();
+      this.connector4.releasePan();
+    }
+  }
+
+  onReleasePan4 = (isDriving) => {
+    if(isDriving && this.props.regular){
+      this.connector2.releasePan();
+      this.connector3.releasePan();
+    }
+  }
+
+  onMove0 = (pan, isDriving) => {
+    this.setState({point0:{x: pan.x,  y: pan.y}}, ()=>{
       this.onMoveCallback();
     });
     if(isDriving && this.props.regular){
-      this.connector2.setPosY(pos.y);
-      this.connector3.setPosX(pos.x);
-    }    
+      // this.connector1.setPan(pan.x, pan.y);      
+      // this.connector2.setPan(pan.x, pan.y);
+      // this.connector3.setPan(pan.x, pan.y);
+      // this.connector4.setPan(pan.x, pan.y);
+    }
+  }
+
+  onMove1 = (pan, isDriving) => {
+    // console.log(pan); 
+    this.setState({point1:{x: pan.x,  y: pan.y}}, ()=>{
+      this.onMoveCallback();
+    });
   };
 
-  onMove2 = (pos, isDriving) => {
-    console.log(pos);
-    this.setState({point2:{x: pos.x,  y: pos.y}}, ()=>{
+  onMove2 = (pan, isDriving) => {
+    // console.log(pan);
+    this.setState({point2:{x: pan.x,  y: pan.y}}, ()=>{
       this.onMoveCallback();     
     });
-    if(isDriving && this.props.regular){
-      this.connector1.setPosY(pos.y);
-      this.connector4.setPosX(pos.x);
-    }
   };
 
-  onMove3 = (pos, isDriving) => {
-    console.log(pos);
-    this.setState({point3:{x: pos.x,  y: pos.y}}, ()=>{
+  onMove3 = (pan, isDriving) => {
+    // console.log(pan);
+    this.setState({point3:{x: pan.x,  y: pan.y}}, ()=>{
       this.onMoveCallback();     
     });
-    if(isDriving && this.props.regular){
-      this.connector1.setPosX(pos.x);
-      this.connector4.setPosY(pos.y);
-    }
   };
 
-  onMove4 = (pos, isDriving) => {
-    console.log(pos);
-    this.setState({point4:{x: pos.x,  y: pos.y}}, ()=>{
+  onMove4 = (pan, isDriving) => {
+    // console.log(pan);
+    this.setState({point4:{x: pan.x,  y: pan.y}}, ()=>{
       this.onMoveCallback();     
     });
-    if(isDriving && this.props.regular){
-      this.connector2.setPosX(pos.x);
-      this.connector3.setPosY(pos.y);    
-    }
   };
 
   onMoveCallback = () => {
@@ -87,14 +194,10 @@ class DragCutBlock extends React.Component {
     if(!this.props.imageRect){
       return null;
     }
-    // console.log(this.props.imageRect);
     let rotateStr = this.props.imageRotation + 'deg';
     let img_rect = this.props.imageRect; 
-    // console.log(this.startp1);
-    // console.log(this.startp2);
-    // console.log(this.startp3);
-    // console.log(this.startp4);
     let path = `M ${this.state.point1.x} ${this.state.point1.y} L ${this.state.point2.x} ${this.state.point2.y} L ${this.state.point4.x} ${this.state.point4.y} L ${this.state.point3.x} ${this.state.point3.y} L ${this.state.point1.x} ${this.state.point1.y} `;
+    console.log(path);
     return (
         <ImageBackground source={this.props.paperBg} resizeMode={'stretch'} 
             style={[
@@ -108,10 +211,13 @@ class DragCutBlock extends React.Component {
           <Svg width={img_rect.w} height={img_rect.h} fill="#0000FF33" >
             <Path d={path} stroke="#0000FF33" />
           </Svg>
-          <RoundConnector  ref={(ref) => { this.connector1 = ref }} rotation={this.props.imageRotation} onMove={this.onMove1.bind(this)}  title={"1"} startPos={this.startp1} />
-          <RoundConnector  ref={(ref) => { this.connector2 = ref }} rotation={this.props.imageRotation} onMove={this.onMove2.bind(this)}  title={"2"} startPos={this.startp2} />
-          <RoundConnector  ref={(ref) => { this.connector3 = ref }} rotation={this.props.imageRotation} onMove={this.onMove3.bind(this)}  title={"3"} startPos={this.startp3} />
-          <RoundConnector  ref={(ref) => { this.connector4 = ref }} rotation={this.props.imageRotation} onMove={this.onMove4.bind(this)}  title={"4"} startPos={this.startp4} />
+          <RoundConnector  ref={(ref) => { this.connector1 = ref }} rotation={this.props.imageRotation} onMove={this.onMove1.bind(this)} onMovePan={this.onMovePan1.bind(this)} onStartPan={this.onStartPan1.bind(this)} onReleasePan={this.onReleasePan1.bind(this)}  title={"1"} startPos={this.startp1} />
+          <RoundConnector  ref={(ref) => { this.connector2 = ref }} rotation={this.props.imageRotation} onMove={this.onMove2.bind(this)} onMovePan={this.onMovePan2.bind(this)} onStartPan={this.onStartPan2.bind(this)} onReleasePan={this.onReleasePan2.bind(this)}  title={"2"} startPos={this.startp2} />
+          <RoundConnector  ref={(ref) => { this.connector3 = ref }} rotation={this.props.imageRotation} onMove={this.onMove3.bind(this)} onMovePan={this.onMovePan3.bind(this)} onStartPan={this.onStartPan3.bind(this)} onReleasePan={this.onReleasePan3.bind(this)}  title={"3"} startPos={this.startp3} />
+          <RoundConnector  ref={(ref) => { this.connector4 = ref }} rotation={this.props.imageRotation} onMove={this.onMove4.bind(this)} onMovePan={this.onMovePan4.bind(this)} onStartPan={this.onStartPan4.bind(this)} onReleasePan={this.onReleasePan4.bind(this)}  title={"4"} startPos={this.startp4} />
+          {this.props.regular && 
+            <RoundConnector  ref={(ref) => { this.connector0 = ref }} rotation={this.props.imageRotation} onMove={this.onMove0.bind(this)} onMovePan={this.onMovePan0.bind(this)} onStartPan={this.onStartPan0.bind(this)} onReleasePan={this.onReleasePan0.bind(this)} title={"0"} startPos={this.startp0} />
+          }
         </ImageBackground>
     );
   }

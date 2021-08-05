@@ -14,16 +14,13 @@ class RoundConnector extends Component {
     onMoveShouldSetPanResponderCapture: (evt, gestureState) => { console.log("onMoveShouldSetPanResponderCapture"); return true; },
 
     onPanResponderGrant: () => {
-      console.log("onPanResponderGrant");
       this.isDriving = true;
-      this.panValue.setOffset({
-        x: this.panValue.x._value,
-        y: this.panValue.y._value
-      });
+      this.startPan();
+      this.props.onStartPan(true);
     },
 
     onPanResponderMove: (evt, gestureState) => {
-      console.log("onPanResponderMove=", gestureState);
+      // console.log(this.props.title + " onPanResponderMove=", gestureState);
       let newPos = {x : gestureState.dx, y : gestureState.dy};
       if(this.props.rotation == 90){
         newPos = {x : gestureState.dy, y : gestureState.dx * -1};
@@ -32,11 +29,14 @@ class RoundConnector extends Component {
       } else if(this.props.rotation == 270){
         newPos = {x : gestureState.dy * -1, y : gestureState.dx};
       }
-      this.panValue.setValue(newPos);
+      console.log(this.props.title + " newPos = ",newPos);
+      this.panValue.setValue(newPos);      
+      this.props.onMovePan(newPos, true);
     },
 
-    onPanResponderRelease: () => {
-      this.panValue.flattenOffset();
+    onPanResponderRelease: () => {      
+      this.releasePan();      
+      this.props.onReleasePan(true);
       this.isDriving = false;
     }
   });
@@ -44,8 +44,9 @@ class RoundConnector extends Component {
   constructor(props) {
     super(props);
     this.panValue.addListener((ret) => {
+      console.log(this.props.title + " ret = ",ret);
       this.props.onMove(ret, this.isDriving);
-    });    
+    });
     this.panValue.setValue({x:props.startPos.x, y:props.startPos.y});
   }
 
@@ -53,14 +54,21 @@ class RoundConnector extends Component {
     this.panValue.removeAllListeners();
   }
 
-  setPosX(x){
-    let newPos = {x : x, y : this.panValue.y._value};
-    this.isDriving = false;
-    this.panValue.setValue(newPos);
+  startPan(){
+    console.log(this.props.title + " start pan");
+    this.panValue.setOffset({
+      x: this.panValue.x._value,
+      y: this.panValue.y._value
+    });
   }
 
-  setPosY(y){
-    let newPos = {y : y, x : this.panValue.x._value};
+  releasePan(){
+    console.log(this.props.title + " release pan");
+    this.panValue.flattenOffset();
+  }
+
+  setPan(dx, dy){
+    let newPos = {y : dy, x : dx};
     this.isDriving = false;
     this.panValue.setValue(newPos);
   }

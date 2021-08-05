@@ -10,7 +10,7 @@ class WarpPerspective extends React.Component {
   }
 
   onMove(posdata){
-    console.log(posdata);
+    // console.log(posdata);
   }
 
   toggleFacing(){
@@ -24,7 +24,7 @@ class WarpPerspective extends React.Component {
     return (
       <View style={{width:this.props.w, height:this.props.h, alignItems:"flex-start", justifyContent:"flex-start", backgroundColor:'#00FFFF'}} >
         <DragCutBlock           
-          regular={false}
+          regular={true}
           paperBg={this.props.paperBg} onMove={this.onMove.bind(this)} 
           imageSize={this.props.imageSize}
           imageRect={img_rect}

@@ -15,7 +15,7 @@ let testpaper1 = require('./demo1.jpg');
 const App = () => {
   const [imgUri,  setImgUri] = useState(null);
   const [imgSize, setImgSize] = useState(null);
-  const [imgRotation, setImgRotation] = useState(90);
+  const [imgRotation, setImgRotation] = useState(0);
 
   const rotateImg = () => {
     setImgRotation((imgRotation+90)%360);
@@ -37,7 +37,7 @@ const App = () => {
         let imginfo = res.assets[0];
         console.log(imginfo);
         setImgSize({width:imginfo.width, height:imginfo.height});
-        setImgUri(imginfo.uri);        
+        setImgUri(imginfo.uri);
     })
   }
 
