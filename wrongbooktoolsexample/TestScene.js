@@ -1,10 +1,10 @@
-import React, { Component, PureComponent, useState } from 'react';
-import { Platform, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import React, { Component,PureComponent,useState } from 'react';
+import { Platform, StyleSheet, Text, View,TouchableOpacity } from 'react-native';
 
 // import {  RotationExample, PanExample } from 'react-native-palmmob3-wrongbook-tools';
-import PanExample from "./libs/PanExample"
+import WarpPerspective from "./libs/WarpPerspective"
 // import RotationExample from "./libs/RotationExample"
-import { launchImageLibrary } from 'react-native-image-picker';
+import {launchImageLibrary } from 'react-native-image-picker';
 
 let testpaper1 = require('./demo1.jpg');
 // let testpaper1 = require('./paper1.jpeg');
@@ -12,44 +12,49 @@ let testpaper1 = require('./demo1.jpg');
 // let testpaper1 = require('./yiti.png');
 // let testpaper1 = {uri:"http://3.palmmob.com/testres/paper1.jpeg"};
 
-import Start from "./src/MistakeRecoder/Start";
+const App = () => {
+  const [imgUri,  setImgUri] = useState(null);
+  const [imgSize, setImgSize] = useState(null);
+  const [imgRotation, setImgRotation] = useState(0);
 
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+  const rotateImg = () => {
+    setImgRotation((imgRotation+90)%360);
+  }
 
-import PhotoSelect from "./src/MistakeRecoder/PhotoSelect";
-import PhotoTailor from "./src/MistakeRecoder/PhotoTailor";
+  const selectByAlbum = () => {
+    let opt = {
+        mediaType: 'photo',
+        quality: 0.7,      
+        maxHeight: 1080,
+        maxWidth: 1080,
+        includeBase64:false,
+    }
+    
+    launchImageLibrary(opt, (res) => {       
+        if(!res.assets) {
+          return;
+        }         
+        let imginfo = res.assets[0];
+        console.log(imginfo);
+        setImgSize({width:imginfo.width, height:imginfo.height});
+        setImgUri(imginfo.uri);
+    })
+  }
 
-const Stack = createStackNavigator();
-
-const RecordStack = createStackNavigator();
-const RecordStackScreen = () => {
   return (
-    <RecordStack.Navigator
-      initialRouteName="PhotoSelect"
-      headerMode='none'
-      mode='card'
-    >
-      <Stack.Screen name="PhotoSelect" component={PhotoSelect} />
-      <Stack.Screen name="PhotoTailor" component={PhotoTailor} />
-    </RecordStack.Navigator >
-  )
-}
+    // <RotationExample paperBg={testpaper1}  />
+    <View style={{flex:1,alignItems:"center", justifyContent:"center",backgroundColor:'#888888'}} >
+      <TouchableOpacity onPress={selectByAlbum}>
+        <Text style={{ alignSelf: 'center', marginTop: 55, fontSize: 18 }}>选取相册</Text>
+      </TouchableOpacity>  
+      {imgUri &&
+        <WarpPerspective imgRotation={imgRotation} paperBg={{uri:imgUri}} w={300} h={500} imageSize={imgSize}  />
+      }
+      <TouchableOpacity onPress={rotateImg}>
+        <Text style={{ alignSelf: 'center', marginTop: 55, fontSize: 18 }}>旋转图片</Text>
+      </TouchableOpacity>        
+    </View>    
+  );
+};
 
-export default class App extends Component {
-  constructor(props) {
-    super(props)
-
-  }
-
-  render() {
-    return (
-      <NavigationContainer>
-        <Stack.Navigator headerMode='none' mode='modal'>
-          <Stack.Screen name="Start" component={Start} />
-          <Stack.Screen name="Recorder" component={RecordStackScreen} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    )
-  }
-}
+export default App;
