@@ -43,8 +43,7 @@ const App = () => {
     })
   }
 
-  return (
-    // <RotationExample paperBg={testpaper1}  />
+  return (    
     <View style={{flex:1,alignItems:"center", justifyContent:"center",backgroundColor:'#888888'}} >
       <TouchableOpacity onPress={selectByAlbum}>
         <Text style={{ alignSelf: 'center', marginTop: 55, fontSize: 18 }}>选取相册</Text>
