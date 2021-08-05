@@ -1,11 +1,12 @@
 import React, { Component } from "react";
 import { Animated, View, StyleSheet, PanResponder, Text } from "react-native";
 
-
 class RoundConnector extends Component {
 
   panValue = new Animated.ValueXY();
   isDriving = false;
+  currentPos = {};
+  startPos = {};
 
   panResponder = PanResponder.create({
     onMoveShouldSetPanResponder: (evt, gestureState) => { return true; },
@@ -28,12 +29,15 @@ class RoundConnector extends Component {
       } else if(this.props.rotation == 270){
         newPos = {x : gestureState.dy * -1, y : gestureState.dx};
       }
-      console.log(this.props.title + " newPos = ",newPos);
-      this.panValue.setValue(newPos);      
+      console.log(this.props.title + " newXY = ",newPos, ", startPos=", this.startPos);
+      newPos.x = this.getLimitionX(newPos.x);
+      newPos.y = this.getLimitionY(newPos.y);
+      console.log(this.props.title + " --- newPos = ",newPos);
+      this.panValue.setValue(newPos);
       this.props.onMovePan(newPos, true);
     },
 
-    onPanResponderRelease: () => {      
+    onPanResponderRelease: () => {
       this.releasePan();      
       this.props.onReleasePan(true);
       this.isDriving = false;
@@ -46,8 +50,34 @@ class RoundConnector extends Component {
     this.panValue.addListener((ret) => {
       console.log(this.props.title + " ret = ",ret);
       this.props.onMove(ret, this.isDriving);
+      this.currentPos.x = ret.x;
+      this.currentPos.y = ret.y;
     });
     this.panValue.setValue({x:props.startPos.x, y:props.startPos.y});
+  }
+
+  getLimitionX(dx){
+    let x = dx + this.startPos.x;
+
+    if(x < this.props.limition.x0){
+      return this.props.limition.x0 - this.startPos.x;
+    }
+    if(x > this.props.limition.x1){
+      return this.props.limition.x1 - this.startPos.x;
+    }    
+    return dx;
+  }
+
+  getLimitionY(dy){
+    let y = dy + this.startPos.y;
+
+    if(y < this.props.limition.y0){
+      return this.props.limition.y0 - this.startPos.y;
+    }
+    if(y > this.props.limition.y1){
+      return this.props.limition.y1 - this.startPos.y;
+    }    
+    return dy;
   }
 
   componentWillUnmount() {
@@ -55,18 +85,24 @@ class RoundConnector extends Component {
   }
 
   startPan(){
+    this.startPos.x = this.currentPos.x;
+    this.startPos.y = this.currentPos.y;
     console.log(this.props.title + " start pan");
     this.panValue.setOffset({
       x: this.panValue.x._value,
       y: this.panValue.y._value
     });
-  }
+  }  
 
   movePan(dx, dy){
+    dx = this.getLimitionX(dx);
+    dy = this.getLimitionY(dy);
+
     let newPos = {y : dy, x : dx};
     this.isDriving = false;
     this.panValue.setValue(newPos);
   }
+
   releasePan(){
     console.log(this.props.title + " release pan");
     this.panValue.flattenOffset();
@@ -89,7 +125,9 @@ class RoundConnector extends Component {
       >
         <View style={[styles.box, 
           {
-            width:dragPoint, height:dragPoint, borderRadius:dragPoint*0.5 
+            width:dragPoint, 
+            height:dragPoint, 
+            borderRadius:dragPoint*0.5
           }]} >
             <Text>{this.props.title}</Text>
         </View>
@@ -107,10 +145,7 @@ const styles = StyleSheet.create({
     backgroundColor:'#00000044'
   },
   box: {
-    height: 30,
-    width: 30,
-    backgroundColor: "#FFFF0044",
-    borderRadius: 15,
+    backgroundColor: "#FFFF0044",    
     justifyContent:"center",
     alignItems:"center"
   }

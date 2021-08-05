@@ -49,7 +49,7 @@ const App = () => {
         <Text style={{ alignSelf: 'center', marginTop: 55, fontSize: 18 }}>选取相册</Text>
       </TouchableOpacity>  
       {imgUri &&
-        <WarpPerspective dragsize={DragSize} regular={false} imgRotation={imgRotation} paperBg={{uri:imgUri}} w={300} h={500} imageSize={imgSize}  />
+        <WarpPerspective dragsize={DragSize} regular={true} imgRotation={imgRotation} paperBg={{uri:imgUri}} w={300} h={500} imageSize={imgSize}  />
       }
       <TouchableOpacity onPress={rotateImg}>
         <Text style={{ alignSelf: 'center', marginTop: 55, fontSize: 18 }}>旋转图片</Text>
