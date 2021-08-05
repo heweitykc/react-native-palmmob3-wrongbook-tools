@@ -19,9 +19,9 @@ export default class PhotoSelect extends Component {
         }
     }
 
+
     componentDidMount() {
         StatusBar.setBarStyle('light-content')
-
     }
 
     componentWillUnmount() {
@@ -82,10 +82,11 @@ export default class PhotoSelect extends Component {
         launchImageLibrary(opt, (res) => {
             console.log('res:', res)
             if (res && !res.didCancel) {
-                if (res.assets && res.assets.length > 0) {
-                    this.didSelectPhoto(res.assets[0].uri)
+                if (res.assets && res.assets[0] && res.assets[0].uri && res.assets[0].uri.length > 0) {
+                    this.didSelectPhoto(res.assets[0].uri, res.assets[0].width, res.assets[0].height)
                     return
                 }
+
                 this.hud && this.hud.showTip('无数据,请重新选择')
             }
             this.camera && this.camera.resumePreview()
@@ -96,22 +97,30 @@ export default class PhotoSelect extends Component {
     takePhoto = async () => {
         if (!this.camera) return
         this.camera.pausePreview()
+
         this.hud && this.hud.showLoading()
+
         let options = { quality: 0.5, base64: true }
         let data = await this.camera.takePictureAsync(options)
+
         this.hud && this.hud.hide()
-        let pUri = data.uri
+
+        let pUri = data ? data.uri : null
         console.log('photo take:', data.width, data.height, data.uri)
         if (!pUri || pUri.length < 1) {
+
             this.hud && this.hud.showTip('未完成,请重新拍照')
+
             this.camera && this.camera.resumePreview()
             return
         }
-        this.didSelectPhoto(pUri)
+        this.didSelectPhoto(pUri, data.width ? data.width / Utils.pixelRatio : 0, data.height ? data.height / Utils.pixelRatio : 0)
     }
 
-    didSelectPhoto = (photoUri) => {
-        console.log('did select:', photoUri)
+    didSelectPhoto = (photoUri, width, height) => {
+        console.log('did select:', photoUri, width, height)
+
+        this.props.navigation.navigate('PhotoTailor', { imgUri: photoUri, img_w: width, img_h: height, backBlock: () => { this.camera && this.camera.resumePreview() } })
     }
 
     render() {

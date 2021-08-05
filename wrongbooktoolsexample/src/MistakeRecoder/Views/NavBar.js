@@ -27,7 +27,7 @@ export default class NavBar extends Component {
     }
 
     render() {
-        const { backBtnRender, backAction, hideback, rightBtnRender, bgColor, isAbsolute } = this.props
+        const { backBtnRender, backAction, titleColor, backImg, hideback, rightBtnRender, bgColor, isAbsolute } = this.props
         let height = Platform.OS === 'ios' ? (Utils.isIPhonex() ? 88 : 64) : (44 + Utils.statusBarHeight)
         let backBtn =
             backBtnRender
@@ -35,7 +35,7 @@ export default class NavBar extends Component {
                 backBtnRender
                 :
                 <TouchableHighlight style={styles.navh_con_back} underlayColor='transparent' activeOpacity={1} onPress={backAction}>
-                    <Image style={[styles.navh_con_back_img, {}]} source={require('../Resources/close_white.png')} />
+                    <Image style={[styles.navh_con_back_img, {}]} source={backImg ? backImg : require('../Resources/close_white.png')} />
                 </TouchableHighlight>
         return (
             <View style={[isAbsolute ? styles.navh_absolute : styles.navh, { height, backgroundColor: bgColor ? bgColor : 'white' }]}>
@@ -47,7 +47,7 @@ export default class NavBar extends Component {
                             :
                             backBtn
                     }
-                    <Text style={styles.navh_con_title}>{this.state.title}</Text>
+                    <Text style={[styles.navh_con_title, { color: titleColor ? titleColor : 'white' }]}>{this.state.title}</Text>
                     {
                         rightBtnRender
                             ?
@@ -96,7 +96,6 @@ const styles = StyleSheet.create({
     },
     navh_con_title: {
         fontSize: Utils.size(18),
-        color: '#ffffff',
         fontWeight: '600',
     }
 })

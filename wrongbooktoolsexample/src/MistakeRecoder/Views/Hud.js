@@ -107,7 +107,7 @@ export default class Hud extends Component {
 const styles = StyleSheet.create({
     showbg: {
         flex: 1,
-        backgroundColor: 'rgba(0,0,0,0.15)',
+        backgroundColor: 'rgba(0,0,0,0.35)',
         justifyContent: 'center',
         alignItems: 'center',
     },

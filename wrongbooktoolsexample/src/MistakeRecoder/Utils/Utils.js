@@ -2,7 +2,8 @@ import React from 'react';
 import {
     Dimensions,
     Platform,
-    StatusBar
+    StatusBar,
+    PixelRatio
 } from 'react-native';
 
 //当前设备尺寸 pt
@@ -10,6 +11,8 @@ const deviceWidth = Dimensions.get('window').width;      //当前设备的宽度
 const deviceHeight = Dimensions.get('window').height;    //当前设备的高度
 
 const statusBarHeight = StatusBar.currentHeight;          //android 
+
+const ratio = PixelRatio.get()
 
 const w = 375;
 
@@ -27,6 +30,7 @@ const twelvepromax_height = 926;
 
 export default class Utils {
 
+    static pixelRatio = ratio
     static deviceHeight = deviceHeight;
     static deviceWidth = deviceWidth;
     static statusBarHeight = statusBarHeight;

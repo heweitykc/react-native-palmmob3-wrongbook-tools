@@ -2,6 +2,7 @@
 class Utils {
 
     static computePaperLayout(zRotation, imageSize, containerInfo) {
+        console.log('123?',zRotation, imageSize, containerInfo)
         let layout = {w:0,h:0,x:0,y:0};
       
         let container_ratio = containerInfo.w / containerInfo.h;
@@ -29,6 +30,7 @@ class Utils {
                 layout.h = layout.w * img_ratio;
             }
         }
+        console.log('123???',layout)
         layout.w = parseInt(layout.w);
         layout.h = parseInt(layout.h);
         layout.x = parseInt((containerInfo.w - layout.w)*0.5);
