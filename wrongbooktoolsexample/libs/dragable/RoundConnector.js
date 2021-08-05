@@ -29,7 +29,7 @@ class RoundConnector extends Component {
       } else if(this.props.rotation == 270){
         newPos = {x : gestureState.dy * -1, y : gestureState.dx};
       }
-      console.log(this.props.title + " newXY = ",newPos, ", startPos=", this.startPos);
+      console.log(this.props.title + " newXY = ",newPos, ", startPos=", this.startPos, ", limition=", this.props.limition);
       newPos.x = this.getLimitionX(newPos.x);
       newPos.y = this.getLimitionY(newPos.y);
       console.log(this.props.title + " --- newPos = ",newPos);
@@ -60,11 +60,14 @@ class RoundConnector extends Component {
     let x = dx + this.startPos.x;
 
     if(x < this.props.limition.x0){
+      console.log("1");
       return this.props.limition.x0 - this.startPos.x;
     }
     if(x > this.props.limition.x1){
+      console.log("2");
       return this.props.limition.x1 - this.startPos.x;
     }    
+    console.log("3");
     return dx;
   }
 
@@ -94,9 +97,11 @@ class RoundConnector extends Component {
     });
   }  
 
-  movePan(dx, dy){
-    dx = this.getLimitionX(dx);
-    dy = this.getLimitionY(dy);
+  movePan(dx, dy, noLimition=false){
+    if(!noLimition){
+      dx = this.getLimitionX(dx);
+      dy = this.getLimitionY(dy);
+    }    
 
     let newPos = {y : dy, x : dx};
     this.isDriving = false;

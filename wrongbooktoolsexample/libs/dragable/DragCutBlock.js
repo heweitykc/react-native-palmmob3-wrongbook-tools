@@ -12,6 +12,7 @@ class DragCutBlock extends React.Component {
 
     this.initPos(props);
 
+    let img_rect = props.imageRect;
     this.state = {
       point0:this.startp0,
       point1:this.startp1,
@@ -19,6 +20,10 @@ class DragCutBlock extends React.Component {
       point3:this.startp3,
       point4:this.startp4,
     };
+    this.state.limition = { x0:0, x1:img_rect.w, y0:0, y1:img_rect.h };
+    this.state.center_limition = this.getCenterLimition();
+    console.log("this.state.point0=",this.state.point0);
+    console.log("this.state.center_limition=",this.state.center_limition);
   }
 
   initPos = (props) => {    
@@ -29,6 +34,10 @@ class DragCutBlock extends React.Component {
 
     this.startp0 = {x:props.imageRect.w*0.5,  y:props.imageRect.h*0.5};
   }
+
+  // componentDidMount() {
+
+  // }
 
   onStartPan0 = (isDriving) => {
     if(!isDriving) return;
@@ -42,7 +51,7 @@ class DragCutBlock extends React.Component {
     if(!isDriving) return;
     if(this.props.regular){
       this.connector2.startPan();
-      this.connector3.startPan();      
+      this.connector3.startPan();
     }    
   }
   onStartPan2 = (isDriving) => {
@@ -76,39 +85,39 @@ class DragCutBlock extends React.Component {
   }
 
   onMovePan1 = (pan, isDriving) => {
+    this.updateCenterPos();
     if(!isDriving) return;
     if(this.props.regular){
       this.connector2.movePan(0, pan.y);
       this.connector3.movePan(pan.x, 0);      
-    }
-    this.setCenter();
+    }    
   }
   
   onMovePan2 = (pan, isDriving) => {
+    this.updateCenterPos();
     if(!isDriving) return;
     if(this.props.regular){
       this.connector1.movePan(0, pan.y);
       this.connector4.movePan(pan.x, 0);      
-    }
-    this.setCenter();
+    }    
   }
 
   onMovePan3 = (pan, isDriving) => {
+    this.updateCenterPos();
     if(!isDriving) return;
     if(this.props.regular){
       this.connector1.movePan(pan.x,0 );
       this.connector4.movePan(0, pan.y);      
-    }
-    this.setCenter();
+    }    
   }
   
   onMovePan4 = (pan, isDriving) => {
+    this.updateCenterPos();
     if(!isDriving) return;
     if(this.props.regular){
       this.connector2.movePan(pan.x, 0);
-      this.connector3.movePan(0,pan.y);      
-    }
-    this.setCenter();
+      this.connector3.movePan(0,pan.y);
+    }    
   }
   
   onReleasePan0 = (isDriving) => {
@@ -120,6 +129,7 @@ class DragCutBlock extends React.Component {
   }
 
   onReleasePan1 = (isDriving) => {
+    this.updateCenterLimition();
     if(!isDriving) return;
     if(this.props.regular){
       this.connector2.releasePan();
@@ -128,6 +138,7 @@ class DragCutBlock extends React.Component {
   }
 
   onReleasePan2 = (isDriving) => {
+    this.updateCenterLimition();
     if(!isDriving) return;
     if(this.props.regular){
       this.connector1.releasePan();
@@ -136,6 +147,7 @@ class DragCutBlock extends React.Component {
   }
 
   onReleasePan3 = (isDriving) => {
+    this.updateCenterLimition();
     if(!isDriving) return;
     if(this.props.regular){
       this.connector1.releasePan();
@@ -144,6 +156,7 @@ class DragCutBlock extends React.Component {
   }
 
   onReleasePan4 = (isDriving) => {
+    this.updateCenterLimition();
     if(!isDriving) return;
     if(this.props.regular){
       this.connector2.releasePan();
@@ -193,13 +206,19 @@ class DragCutBlock extends React.Component {
     this.props.onMove(poslist);
   }
 
-  setCenter(){
+  updateCenterLimition(){
+    this.setState({
+      center_limition : this.getCenterLimition()
+    });    
+  }
+
+  updateCenterPos(){
     let poslist = [this.state.point1, this.state.point2, this.state.point3, this.state.point4];
     let center = Utils.getCenter(poslist);
     let dx = center.x - this.state.point0.x;
     let dy = center.y - this.state.point0.y;
     this.connector0.startPan();
-    this.connector0.movePan(dx, dy);
+    this.connector0.movePan(dx, dy, true);
     this.connector0.releasePan();
   }
 
@@ -214,6 +233,7 @@ class DragCutBlock extends React.Component {
     limition.x1 = this.state.point0.x + (img_rect.w - maxX);
     limition.y0 = this.state.point0.y + (0 - minY);
     limition.y1 = this.state.point0.y + (img_rect.h - maxY);
+    console.log("getCenterLimition=",limition);
     return limition;
   }
 
@@ -225,9 +245,6 @@ class DragCutBlock extends React.Component {
     let img_rect = this.props.imageRect; 
     let path = `M ${this.state.point1.x} ${this.state.point1.y} L ${this.state.point2.x} ${this.state.point2.y} L ${this.state.point4.x} ${this.state.point4.y} L ${this.state.point3.x} ${this.state.point3.y} L ${this.state.point1.x} ${this.state.point1.y} `;
     console.log(path);
-    let limition = { x0:0, x1:img_rect.w, y0:0, y1:img_rect.h };
-    console.log("limition=",limition);
-    let center_limition = this.getCenterLimition();
     return (
         <ImageBackground source={this.props.paperBg} resizeMode={'stretch'} 
             style={[
@@ -241,12 +258,12 @@ class DragCutBlock extends React.Component {
           <Svg width={img_rect.w} height={img_rect.h} fill="#0000FF33" >
             <Path d={path} stroke="#0000FF33" />
           </Svg>
-          <RoundConnector limition={limition} dragsize={this.props.dragsize}  ref={(ref) => { this.connector1 = ref }} rotation={this.props.imageRotation} onMove={this.onMove1.bind(this)} onMovePan={this.onMovePan1.bind(this)} onStartPan={this.onStartPan1.bind(this)} onReleasePan={this.onReleasePan1.bind(this)}  title={"1"} startPos={this.startp1} />
-          <RoundConnector limition={limition} dragsize={this.props.dragsize}  ref={(ref) => { this.connector2 = ref }} rotation={this.props.imageRotation} onMove={this.onMove2.bind(this)} onMovePan={this.onMovePan2.bind(this)} onStartPan={this.onStartPan2.bind(this)} onReleasePan={this.onReleasePan2.bind(this)}  title={"2"} startPos={this.startp2} />
-          <RoundConnector limition={limition} dragsize={this.props.dragsize}  ref={(ref) => { this.connector3 = ref }} rotation={this.props.imageRotation} onMove={this.onMove3.bind(this)} onMovePan={this.onMovePan3.bind(this)} onStartPan={this.onStartPan3.bind(this)} onReleasePan={this.onReleasePan3.bind(this)}  title={"3"} startPos={this.startp3} />
-          <RoundConnector limition={limition} dragsize={this.props.dragsize}  ref={(ref) => { this.connector4 = ref }} rotation={this.props.imageRotation} onMove={this.onMove4.bind(this)} onMovePan={this.onMovePan4.bind(this)} onStartPan={this.onStartPan4.bind(this)} onReleasePan={this.onReleasePan4.bind(this)}  title={"4"} startPos={this.startp4} />       
+          <RoundConnector limition={this.state.limition} dragsize={this.props.dragsize}  ref={(ref) => { this.connector1 = ref }} rotation={this.props.imageRotation} onMove={this.onMove1.bind(this)} onMovePan={this.onMovePan1.bind(this)} onStartPan={this.onStartPan1.bind(this)} onReleasePan={this.onReleasePan1.bind(this)}  title={"1"} startPos={this.startp1} />
+          <RoundConnector limition={this.state.limition} dragsize={this.props.dragsize}  ref={(ref) => { this.connector2 = ref }} rotation={this.props.imageRotation} onMove={this.onMove2.bind(this)} onMovePan={this.onMovePan2.bind(this)} onStartPan={this.onStartPan2.bind(this)} onReleasePan={this.onReleasePan2.bind(this)}  title={"2"} startPos={this.startp2} />
+          <RoundConnector limition={this.state.limition} dragsize={this.props.dragsize}  ref={(ref) => { this.connector3 = ref }} rotation={this.props.imageRotation} onMove={this.onMove3.bind(this)} onMovePan={this.onMovePan3.bind(this)} onStartPan={this.onStartPan3.bind(this)} onReleasePan={this.onReleasePan3.bind(this)}  title={"3"} startPos={this.startp3} />
+          <RoundConnector limition={this.state.limition} dragsize={this.props.dragsize}  ref={(ref) => { this.connector4 = ref }} rotation={this.props.imageRotation} onMove={this.onMove4.bind(this)} onMovePan={this.onMovePan4.bind(this)} onStartPan={this.onStartPan4.bind(this)} onReleasePan={this.onReleasePan4.bind(this)}  title={"4"} startPos={this.startp4} />       
 
-          <RoundConnector limition={center_limition} dragsize={this.props.dragsize}  ref={(ref) => { this.connector0 = ref }} rotation={this.props.imageRotation} onMove={this.onMove0.bind(this)} onMovePan={this.onMovePan0.bind(this)} onStartPan={this.onStartPan0.bind(this)} onReleasePan={this.onReleasePan0.bind(this)}  title={"0"} startPos={this.startp0} />          
+          <RoundConnector limition={this.state.center_limition} dragsize={this.props.dragsize}  ref={(ref) => { this.connector0 = ref }} rotation={this.props.imageRotation} onMove={this.onMove0.bind(this)} onMovePan={this.onMovePan0.bind(this)} onStartPan={this.onStartPan0.bind(this)} onReleasePan={this.onReleasePan0.bind(this)}  title={"0"} startPos={this.startp0} />          
         </ImageBackground>
     );
   }
