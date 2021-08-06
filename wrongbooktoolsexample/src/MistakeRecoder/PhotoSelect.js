@@ -120,7 +120,7 @@ export default class PhotoSelect extends Component {
     didSelectPhoto = (photoUri, width, height) => {
         console.log('did select:', photoUri, width, height)
 
-        this.props.navigation.navigate('PhotoTailor', { imgUri: photoUri, img_w: width, img_h: height, backBlock: () => { this.camera && this.camera.resumePreview() } })
+        this.props.navigation.navigate('PhotoTailor', { imgUri: photoUri, img_w: width, img_h: height, isSingle: (this.state.takeType == 0), backBlock: () => { this.camera && this.camera.resumePreview() } })
     }
 
     render() {

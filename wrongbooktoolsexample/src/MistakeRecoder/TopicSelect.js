@@ -3,12 +3,14 @@ import { Platform, StyleSheet, Text, View, Modal, TouchableHighlight, Image, Sta
 
 import Utils from "./Utils/Utils";
 import NavBar from "./Views/NavBar";
+import TopicMarker from "../../libs/TopicMarker";
 
 export default class TopicSelect extends Component {
     constructor(props) {
         super(props)
 
         this.state = {
+            markers: []
         }
     }
 
@@ -21,6 +23,22 @@ export default class TopicSelect extends Component {
         this.props.navigation.pop()
     }
 
+    manual = () => {
+        this.props.navigation.navigate('ManualSelect', { imgUri: this.props.route?.params?.imgUri, img_w: this.props.route?.params?.img_w, img_h: this.props.route?.params?.img_h, addMark: (pdata) => { this.addMark(pdata) } })
+    }
+
+    addMark = (pdata) => {
+        if (!pdata || pdata.length < 4) return
+
+        this.setState({
+            markers: this.state.markers.concat([pdata, false])
+        })
+    }
+
+    sure = () => {
+
+    }
+
     rightBtnRender = () => {
         return (
             <TouchableHighlight style={styles.rb}>
@@ -30,31 +48,36 @@ export default class TopicSelect extends Component {
     }
 
     render() {
+        const { imgUri, img_w, img_h } = this.props.route.params
+
         let botHeight = Utils.isIPhonex() ? Utils.size(105) + Utils.size(20) : Utils.size(105)
+        //
+        let navHeight = Platform.OS === 'ios' ? (Utils.isIPhonex() ? 88 : 64) : (44 + Utils.statusBarHeight)
+        let midHeight = Utils.deviceHeight - navHeight - botHeight
         return (
             <View style={styles.topic}>
                 <NavBar title='选择题干' titleColor='black' bgColor='white' backAction={this.navBack} backImg={require('./Resources/back_black.png')} rightBtnRender={this.rightBtnRender} />
                 <View style={{ flex: 1 }}>
-
+                    <TopicMarker ref={e => { this.marker = e }} img={{ uri: imgUri }} imgSize={{ width: img_w, height: img_h }} containerSize={{ w: Utils.deviceWidth, h: midHeight }} markers={this.state.markers} />
                 </View>
                 <View style={[styles.bot, { height: botHeight }]}>
                     <Text style={styles.bot_t}>{'点击批量选择错题, 长按可编辑错题区域'}</Text>
                     <View style={styles.bot_btns}>
-                        <TouchableHighlight style={styles.bot_btns_lb}>
+                        <TouchableHighlight style={styles.bot_btns_lb} underlayColor='transparent' activeOpacity={1} onPress={this.navBack}>
                             <View style={styles.bot_btns_lb_v}>
                                 <Image style={styles.bot_btns_lb_img} source={require('./Resources/to_xiangji.png')} />
                                 <Text style={styles.bot_btns_lb_t}>{'重拍'}</Text>
                             </View>
                         </TouchableHighlight>
-                        <TouchableHighlight style={styles.bot_btns_lb}>
+                        <TouchableHighlight style={styles.bot_btns_lb} underlayColor='transparent' activeOpacity={1} onPress={this.manual}>
                             <View style={styles.bot_btns_lb_v}>
                                 <Image style={styles.bot_btns_lb_img} source={require('./Resources/to_shouzhi.png')} />
-                                <Text style={styles.bot_btns_lb_t}>{'重拍'}</Text>
+                                <Text style={styles.bot_btns_lb_t}>{'手动框题'}</Text>
                             </View>
                         </TouchableHighlight>
                         <View style={styles.bot_btns_rbv}>
-                            <TouchableHighlight style={styles.bot_btns_rb}>
-                                <Text style={styles.bot_btns_rb_t}>{'选择题干'}</Text>
+                            <TouchableHighlight style={styles.bot_btns_rb} underlayColor='transparent' activeOpacity={1} onPress={this.sure}>
+                                <Text style={styles.bot_btns_rb_t}>{'加入错题本'}</Text>
                             </TouchableHighlight>
                         </View>
                     </View>
@@ -104,7 +127,7 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     bot_btns_lb: {
-        width: Utils.size(95),
+        width: Utils.size(75),
         height: Utils.size(75),
     },
     bot_btns_lb_v: {
@@ -130,7 +153,7 @@ const styles = StyleSheet.create({
     },
     bot_btns_rb: {
         marginRight: Utils.size(20),
-        width: Utils.size(105),
+        width: Utils.size(126),
         height: Utils.size(38),
         justifyContent: 'center',
         alignItems: 'center',
