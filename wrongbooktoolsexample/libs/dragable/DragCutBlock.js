@@ -23,11 +23,22 @@ class DragCutBlock extends React.Component {
     this.onMove = props.onMove
     this.inUse = props.inUse
 
-    this.startp1 = { x: 0, y: 0 };
-    this.startp2 = { x: props.imageRect.w, y: 0 };
-    this.startp3 = { x: 0, y: props.imageRect.h };
-    this.startp4 = { x: props.imageRect.w, y: props.imageRect.h };
-    this.startp0 = { x: props.imageRect.w * 0.5, y: props.imageRect.h * 0.5 };
+    //default start point
+    this.initPoints = props.initPoints
+
+    if (this.initPoints && this.initPoints.length >= 4) {
+      this.startp1 = this.initPoints[0]
+      this.startp2 = this.initPoints[1]
+      this.startp3 = this.initPoints[2]
+      this.startp4 = this.initPoints[3]
+      this.startp0 = { x: (this.initPoints[1].x - this.initPoints[0].x) * 0.5 + this.initPoints[0].x, y: (this.initPoints[2].y - this.initPoints[0].y) * 0.5 + this.initPoints[0].y };
+    } else {
+      this.startp1 = { x: 0, y: 0 };
+      this.startp2 = { x: props.imageRect.w, y: 0 };
+      this.startp3 = { x: 0, y: props.imageRect.h };
+      this.startp4 = { x: props.imageRect.w, y: props.imageRect.h };
+      this.startp0 = { x: props.imageRect.w * 0.5, y: props.imageRect.h * 0.5 };
+    }
 
     if (isInit) {
       this.state = {

@@ -31,13 +31,23 @@ export default class ManualSelect extends Component {
         this.posdata = posdata
     }
 
-    sure = () => {
-        this.props.route.params.addMark && this.props.route.params.addMark(this.posdata)
+    sure = (isEdit) => {
+        if (isEdit) {
+            this.props.route.params.updateMark && this.props.route.params.updateMark(this.posdata)
+        } else {
+            this.props.route.params.addMark && this.props.route.params.addMark(this.posdata)
+        }
+        this.navBack()
+    }
+
+    delete = () => {
+        this.props.route.params.deleteMark && this.props.route.params.deleteMark()
         this.navBack()
     }
 
     render() {
-        const { imgUri, img_w, img_h } = this.props.route.params
+        //isEdit 编辑错题框
+        const { imgUri, img_w, img_h, isEdit, editPoints } = this.props.route.params
 
         let botHeight = Utils.isIPhonex() ? Utils.size(105) + Utils.size(20) : Utils.size(105)
         //
@@ -58,22 +68,26 @@ export default class ManualSelect extends Component {
                         imageRect={img_rect}
                         imageRotation={0}
                         inUse={true}
+                        initPoints={editPoints}
                     />
                 </View>
                 <View style={[styles.man_bot, { height: botHeight }]}>
+                    <View style={[styles.man_bot_v, { height: Utils.size(105) }]} />
                     <View style={[styles.man_bot_v, { height: Utils.size(105) }]}>
-                        <TouchableHighlight style={styles.man_bot_btn} underlayColor='transparent' activeOpacity={1} onPress={this.sure}>
+                        <TouchableHighlight style={styles.man_bot_btn} underlayColor='transparent' activeOpacity={0.8} onPress={() => this.sure(isEdit)}>
                             <Image style={styles.man_bot_btn_img} source={require('./Resources/xuanzhong_yel.png')} />
+                        </TouchableHighlight>
+                    </View>
+                    <View style={[styles.man_bot_v, { height: Utils.size(105), opacity: isEdit ? 1 : 0 }]}>
+                        <TouchableHighlight style={styles.man_bot_btn} underlayColor='transparent' activeOpacity={0.8} onPress={this.delete}>
+                            <Image style={styles.man_bot_btn_img_del} source={require('./Resources/lib_del.png')} />
                         </TouchableHighlight>
                     </View>
                 </View>
             </View>
         )
     }
-
-
 }
-
 
 const styles = StyleSheet.create({
     man: {
@@ -81,9 +95,10 @@ const styles = StyleSheet.create({
         alignItems: 'stretch'
     },
     man_bot: {
-        alignItems: 'stretch'
+        flexDirection: 'row',
     },
     man_bot_v: {
+        flex: 1,
         justifyContent: 'center',
         alignItems: 'center'
     },
@@ -96,5 +111,9 @@ const styles = StyleSheet.create({
     man_bot_btn_img: {
         width: Utils.size(55),
         height: Utils.size(55)
+    },
+    man_bot_btn_img_del: {
+        width: Utils.size(25),
+        height: Utils.size(25)
     }
 })

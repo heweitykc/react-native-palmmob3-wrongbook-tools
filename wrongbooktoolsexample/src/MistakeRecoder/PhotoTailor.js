@@ -43,7 +43,7 @@ export default class PhotoTailor extends Component {
 
         return (
             <View style={styles.tailor}>
-                <NavBar title='选择错题区域' titleColor='white' hideback bgColor='black' />
+                <NavBar title={isSingle ? '单题框选' : '选择错题区域'} titleColor='white' hideback bgColor='black' />
                 <View style={{ flex: 1 }}>
                     <WarpPerspective dragsize={[150, 50]} regular={isSingle} imgRotation={0} paperBg={{ uri: imgUri }} w={Utils.deviceWidth} h={midHeight} imageSize={{ width: img_w, height: img_h }} style={{ zIndex: (this.state.imgRotation % 360 === 0) ? 1 : 0 }} inUse={(this.state.imgRotation % 360 === 0)} />
                     <WarpPerspective dragsize={[150, 50]} regular={isSingle} imgRotation={90} paperBg={{ uri: imgUri }} w={Utils.deviceWidth} h={midHeight} imageSize={{ width: img_w, height: img_h }} style={{ zIndex: (this.state.imgRotation % 360 === 90) ? 1 : 0 }} inUse={(this.state.imgRotation % 360 === 90)} />
@@ -51,7 +51,7 @@ export default class PhotoTailor extends Component {
                     <WarpPerspective dragsize={[150, 50]} regular={isSingle} imgRotation={270} paperBg={{ uri: imgUri }} w={Utils.deviceWidth} h={midHeight} imageSize={{ width: img_w, height: img_h }} style={{ zIndex: (this.state.imgRotation % 360 === 270) ? 1 : 0 }} inUse={(this.state.imgRotation % 360 === 270)} />
                 </View>
                 <View style={[styles.tailor_bot, { height: botHeight }]}>
-                    <Text style={styles.tailor_bot_t}>{isSingle ? '请将黄色边框对准题目' : '请将黄色边框对准试卷边缘'}</Text>
+                    <Text style={styles.tailor_bot_t}>{isSingle ? '一次仅录入一道题' : '请将黄色边框对准试卷边缘'}</Text>
                     <View style={styles.tailor_bot_btns}>
                         <View style={styles.tailor_bot_btns_item}>
                             <TouchableHighlight style={styles.tailor_bot_btns_item_btn} underlayColor='transparent' activeOpacity={1} onPress={this.navBack}>

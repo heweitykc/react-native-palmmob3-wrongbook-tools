@@ -1,3 +1,4 @@
+import ImageEditor from "@react-native-community/image-editor";
 
 class Utils {
 
@@ -54,6 +55,29 @@ class Utils {
         lon /= total;
         // console.log("lat:",lat,"lon:",lon);
         return { x: parseInt(lat * 180 / Math.PI), y: parseInt(lon * 180 / Math.PI) };
+    }
+
+    //裁剪(支持远程/本地uri) cropData: [[{x:0,y:0},{x:0,y:0},{x:0,y:0},{x:0,y:0}]...]
+    static async imgCrop(imgUri, cropData) {
+        if (!imgUri || imgUri.length < 1 || !cropData || cropData.length < 1) return null
+        let res = []
+        for (let i = 0; i < cropData.length; i++) {
+            const cdata = cropData[i]
+            if (!cdata || cdata.length < 4) {
+                continue
+            }
+            let crop = {
+                offset: { x: cdata[0].x, y: cdata[0].y },
+                size: { width: cdata[1].x - cdata[0].x, height: cdata[2].y - cdata[0].y },
+                displaySize: { width: cdata[1].x - cdata[0].x, height: cdata[2].y - cdata[0].y },
+                resizeMode: 'contain'
+            }
+            let cropResult = await ImageEditor.cropImage(imgUri, crop)
+            if (cropResult && cropResult.length > 0) {
+                res.push(cropResult)
+            }
+        }
+        return res
     }
 }
 

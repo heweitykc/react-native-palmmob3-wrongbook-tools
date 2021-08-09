@@ -41,7 +41,12 @@ export default class TopicMarker extends Component {
         })
     }
 
+    markStateChange = (i, selected) => {
+        this.props.markStateChange && this.props.markStateChange(i, selected)
+    }
+
     render() {
+        const { markLongClick } = this.props
         let markers = this.state.markers
         console.log('markers:', markers)
         let img_rect = Utils.computePaperLayout(0, this.state.imgSize, this.state.containerSize, false)
@@ -52,7 +57,7 @@ export default class TopicMarker extends Component {
                         (markers && markers.length > 0)
                             ?
                             markers.map((marker, i) => {
-                                return <Marker key={i + ''} points={marker[0]} isSelected={marker[1]} />
+                                return <Marker key={i + ''} points={marker.points} img_size={this.state.imgSize} img_rect={img_rect} isSelected={marker.isselected} stateChange={(selected) => this.markStateChange(i, selected)} longClick={() => markLongClick(i, marker.points, this.state.imgSize, img_rect)} />
                             })
                             :
                             null
