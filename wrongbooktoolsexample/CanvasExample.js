@@ -13,19 +13,13 @@
    Alert,
    TouchableOpacity,
    ScrollView,
-   Image,
    Platform
  } from 'react-native';
-//  import { RNCamera } from 'react-native-camera';
+ import { RNCamera } from 'react-native-camera';
  
- import RNSketchCanvas from 'react-native-palmmob3-wrongbook-tools';
- import { SketchCanvas } from 'react-native-palmmob3-wrongbook-tools';
- import {launchImageLibrary } from 'react-native-image-picker';
-
- let testpaper1 = require('./yiti.png');
- let info = Image.resolveAssetSource(testpaper1);
- console.log(info);
-
+ import RNSketchCanvas from '@terrylinla/react-native-sketch-canvas';
+ import { SketchCanvas } from '@terrylinla/react-native-sketch-canvas';
+ 
  export default class example extends Component {
    constructor(props) {
      super(props)
@@ -36,8 +30,7 @@
        thickness: 5,
        message: '',
        photoPath: null,
-       scrollEnabled: true, 
-       fileinfo:null
+       scrollEnabled: true
      }
    }
  
@@ -50,23 +43,6 @@
        })
      }
    };
-
-   selectByAlbum = async () => {
-      let opt = {
-          mediaType: 'photo',
-          quality: 0.7,
-          includeBase64: false,
-          maxHeight: 1080,
-          maxWidth: 1080,
-          includeBase64:true,
-      }
-      launchImageLibrary(opt, (res) => {
-          console.log(res);
-          this.setState({
-            'fileinfo':res['assets'][0]
-          });
-      })
-  }
  
    render() {
      return (
@@ -373,7 +349,7 @@
            this.state.example === 4 &&
            (this.state.photoPath === null ?
              <View style={styles.cameraContainer}>
-               {/* <RNCamera
+               <RNCamera
                  ref={ref => {
                    this.camera = ref;
                  }}
@@ -382,7 +358,7 @@
                  flashMode={RNCamera.Constants.FlashMode.on}
                  permissionDialogTitle={'Permission to use camera'}
                  permissionDialogMessage={'We need your permission to use your camera phone'}
-               /> */}
+               />
                <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'center', }}>
                  <TouchableOpacity
                    onPress={this.takePicture.bind(this)}
@@ -454,15 +430,8 @@
          {
            this.state.example === 5 &&
            <View style={{ flex: 1, flexDirection: 'row' }}>
-            <TouchableOpacity onPress={() => {
-              this.selectByAlbum();
-            }}>
-              <Text style={{ alignSelf: 'center', marginTop: 15, fontSize: 18 }}>选取相册</Text>
-            </TouchableOpacity>
              <RNSketchCanvas
-              //  localSourceImage={{ filename: this.state.filepath.fileName, directory:RNSketchCanvas.CACHES,  mode: 'AspectFit' }}
-              //  localSourceImage={{ filename: this.state.filepath.uri, mode: 'AspectFit' }}
-              localSourceImage={{ filedata : this.state.fileinfo?.base64,  mode: 'AspectFit' }}
+               localSourceImage={{ filename: 'whale.png', directory: SketchCanvas.MAIN_BUNDLE, mode: 'AspectFit' }}
                // localSourceImage={{ filename: 'bulb.png', directory: RNSketchCanvas.MAIN_BUNDLE }}
                containerStyle={{ backgroundColor: 'transparent', flex: 1 }}
                canvasStyle={{ backgroundColor: 'transparent', flex: 1 }}
@@ -696,4 +665,3 @@
      shadowRadius: 2
    }
  });
- 

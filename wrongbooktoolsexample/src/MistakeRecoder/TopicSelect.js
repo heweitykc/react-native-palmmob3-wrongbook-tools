@@ -114,7 +114,7 @@ export default class TopicSelect extends Component {
     }
 
     render() {
-        const { imgUri, img_w, img_h } = this.props.route.params
+        const { imgUri, img_w, img_h } = this.props.route?.params
 
         let botHeight = Utils.isIPhonex() ? Utils.size(105) + Utils.size(20) : Utils.size(105)
         //

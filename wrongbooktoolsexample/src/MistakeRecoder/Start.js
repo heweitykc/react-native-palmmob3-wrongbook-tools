@@ -1,13 +1,12 @@
 import React, { Component, PureComponent } from 'react';
 import { Platform, StyleSheet, Text, View, Modal, TouchableOpacity } from 'react-native';
 
-import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
-import PhotoSelect from "./PhotoSelect";
-import PhotoTailor from "./PhotoTailor";
-
 import SegmentSelector from "./SegmentSelector";
+
+import { launchImageLibrary } from 'react-native-image-picker';
+import Hud from "./Views/Hud";
 
 const Stack = createStackNavigator();
 
@@ -31,6 +30,28 @@ export default class Start extends Component {
         this.props.navigation.navigate('Recorder')
     }
 
+    goEdit = () => {
+        let opt = {
+            mediaType: 'photo',
+            quality: 1,
+            includeBase64: false,
+            maxHeight: 900,
+            maxWidth: 900,
+        }
+        launchImageLibrary(opt, (res) => {
+            console.log('res:', res)
+            if (res && !res.didCancel) {
+                if (res.assets && res.assets[0] && res.assets[0].uri && res.assets[0].uri.length > 0) {
+                    this.props.navigation.navigate('Recorder', { screen: 'PhotoEditor', params: { imgUri: res.assets[0].uri, img_w: res.assets[0].width, img_h: res.assets[0].height } })
+                    return
+                }
+                this.hud && this.hud.showTip('无数据,请重新选择')
+            }
+        })
+
+
+    }
+
     render() {
         return (
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'orange' }} >
@@ -38,6 +59,10 @@ export default class Start extends Component {
                 <TouchableOpacity style={{ marginTop: 50, width: 100, height: 100, backgroundColor: 'orange', justifyContent: 'center', alignItems: 'center' }} onPress={this.go}>
                     <Text style={{ fontSize: 25, color: 'white' }}>{'GO'}</Text>
                 </TouchableOpacity>
+                <TouchableOpacity style={{ marginTop: 50, width: 100, height: 100, backgroundColor: 'orange', justifyContent: 'center', alignItems: 'center' }} onPress={this.goEdit}>
+                    <Text style={{ fontSize: 25, color: 'white' }}>{'GO EDIT'}</Text>
+                </TouchableOpacity>
+                <Hud ref={e => this.hud = e} />
             </View>
         )
     }

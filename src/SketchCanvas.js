@@ -92,7 +92,7 @@ class SketchCanvas extends React.Component {
     this.state.text = this._processText(props.text ? props.text.map(t => Object.assign({}, t)) : null)
   }
 
-  UNSAFE_componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps) {
     this.setState({
       text: this._processText(nextProps.text ? nextProps.text.map(t => Object.assign({}, t)) : null)
     })
@@ -106,7 +106,8 @@ class SketchCanvas extends React.Component {
   clear() {
     this._paths = []
     this._path = null
-    UIManager.dispatchViewManagerCommand(this._handle, UIManager.RNSketchCanvas.Commands.clear, [])
+    // UIManager.dispatchViewManagerCommand(this._handle, UIManager.RNSketchCanvas.Commands.clear, [])
+    UIManager.dispatchViewManagerCommand(this._handle, UIManager.getViewManagerConfig(RNSketchCanvas).Commands.clear, [])
   }
 
   undo() {
@@ -123,7 +124,7 @@ class SketchCanvas extends React.Component {
         const coor = p.split(',').map(pp => parseFloat(pp).toFixed(2))
         return `${coor[0] * this._screenScale * this._size.width / data.size.width},${coor[1] * this._screenScale * this._size.height / data.size.height}`;
       })
-      UIManager.dispatchViewManagerCommand(this._handle, UIManager.RNSketchCanvas.Commands.addPath, [
+      UIManager.dispatchViewManagerCommand(this._handle, UIManager.getViewManagerConfig(RNSketchCanvas).Commands.addPath, [
         data.path.id, processColor(data.path.color), data.path.width * this._screenScale, pathData
       ])
     } else {
@@ -133,11 +134,11 @@ class SketchCanvas extends React.Component {
 
   deletePath(id) {
     this._paths = this._paths.filter(p => p.path.id !== id)
-    UIManager.dispatchViewManagerCommand(this._handle, UIManager.RNSketchCanvas.Commands.deletePath, [id])
+    UIManager.dispatchViewManagerCommand(this._handle, UIManager.getViewManagerConfig(RNSketchCanvas).Commands.deletePath, [id])
   }
 
   save(imageType, transparent, folder, filename, includeImage, includeText, cropToImageSize) {
-    UIManager.dispatchViewManagerCommand(this._handle, UIManager.RNSketchCanvas.Commands.save, [imageType, folder, filename, transparent, includeImage, includeText, cropToImageSize])
+    UIManager.dispatchViewManagerCommand(this._handle, UIManager.getViewManagerConfig(RNSketchCanvas).Commands.save, [imageType, folder, filename, transparent, includeImage, includeText, cropToImageSize])
   }
 
   getPaths() {
@@ -152,7 +153,7 @@ class SketchCanvas extends React.Component {
     }
   }
 
-  UNSAFE_componentWillMount() {
+  componentWillMount() {
     this.panResponder = PanResponder.create({
       // Ask to be the responder:
       onStartShouldSetPanResponder: (evt, gestureState) => true,
@@ -171,7 +172,7 @@ class SketchCanvas extends React.Component {
         
         UIManager.dispatchViewManagerCommand(
           this._handle,
-          UIManager.RNSketchCanvas.Commands.newPath,
+          UIManager.getViewManagerConfig(RNSketchCanvas).Commands.newPath,
           [
             this._path.id,
             processColor(this._path.color),
@@ -180,7 +181,7 @@ class SketchCanvas extends React.Component {
         )
         UIManager.dispatchViewManagerCommand(
           this._handle,
-          UIManager.RNSketchCanvas.Commands.addPoint,
+          UIManager.getViewManagerConfig(RNSketchCanvas).Commands.addPoint,
           [
             parseFloat((gestureState.x0 - this._offset.x).toFixed(2) * this._screenScale),
             parseFloat((gestureState.y0 - this._offset.y).toFixed(2) * this._screenScale)
@@ -193,7 +194,7 @@ class SketchCanvas extends React.Component {
       onPanResponderMove: (evt, gestureState) => {
         if (!this.props.touchEnabled) return
         if (this._path) {
-          UIManager.dispatchViewManagerCommand(this._handle, UIManager.RNSketchCanvas.Commands.addPoint, [
+          UIManager.dispatchViewManagerCommand(this._handle, UIManager.getViewManagerConfig(RNSketchCanvas).Commands.addPoint, [
             parseFloat((gestureState.moveX - this._offset.x).toFixed(2) * this._screenScale),
             parseFloat((gestureState.moveY - this._offset.y).toFixed(2) * this._screenScale)
           ])
@@ -208,7 +209,7 @@ class SketchCanvas extends React.Component {
           this.props.onStrokeEnd({ path: this._path, size: this._size, drawer: this.props.user })
           this._paths.push({ path: this._path, size: this._size, drawer: this.props.user })
         }
-        UIManager.dispatchViewManagerCommand(this._handle, UIManager.RNSketchCanvas.Commands.endPath, [])
+        UIManager.dispatchViewManagerCommand(this._handle, UIManager.getViewManagerConfig(RNSketchCanvas).Commands.endPath, [])
       },
 
       onShouldBlockNativeResponder: (evt, gestureState) => {
@@ -247,7 +248,6 @@ class SketchCanvas extends React.Component {
           }
         }}
         localSourceImage={this.props.localSourceImage}
-        localBase64Image={this.props.localBase64Image}
         permissionDialogTitle={this.props.permissionDialogTitle}
         permissionDialogMessage={this.props.permissionDialogMessage}
         text={this.state.text}
@@ -256,9 +256,14 @@ class SketchCanvas extends React.Component {
   }
 }
 
-SketchCanvas.MAIN_BUNDLE = Platform.OS === 'ios' ? UIManager.RNSketchCanvas.Constants.MainBundlePath : '';
-SketchCanvas.DOCUMENT = Platform.OS === 'ios' ? UIManager.RNSketchCanvas.Constants.NSDocumentDirectory : '';
-SketchCanvas.LIBRARY = Platform.OS === 'ios' ? UIManager.RNSketchCanvas.Constants.NSLibraryDirectory : '';
-SketchCanvas.CACHES = Platform.OS === 'ios' ? UIManager.RNSketchCanvas.Constants.NSCachesDirectory : '';
+// SketchCanvas.MAIN_BUNDLE = Platform.OS === 'ios' ? UIManager.RNSketchCanvas.Constants.MainBundlePath : '';
+// SketchCanvas.DOCUMENT = Platform.OS === 'ios' ? UIManager.RNSketchCanvas.Constants.NSDocumentDirectory : '';
+// SketchCanvas.LIBRARY = Platform.OS === 'ios' ? UIManager.RNSketchCanvas.Constants.NSLibraryDirectory : '';
+// SketchCanvas.CACHES = Platform.OS === 'ios' ? UIManager.RNSketchCanvas.Constants.NSCachesDirectory : '';
+
+SketchCanvas.MAIN_BUNDLE = Platform.OS === 'ios' ? UIManager['getConstants'].MainBundlePath : '';
+SketchCanvas.DOCUMENT = Platform.OS === 'ios' ? UIManager['getConstants'].NSDocumentDirectory : '';
+SketchCanvas.LIBRARY = Platform.OS === 'ios' ? UIManager['getConstants'].NSLibraryDirectory : '';
+SketchCanvas.CACHES = Platform.OS === 'ios' ? UIManager['getConstants'].NSCachesDirectory : '';
 
 module.exports = SketchCanvas;

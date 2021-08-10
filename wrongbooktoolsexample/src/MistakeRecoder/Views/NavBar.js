@@ -91,8 +91,8 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     navh_con_back_img: {
-        width: Utils.size(22),
-        height: Utils.size(22),
+        width: Utils.size(20),
+        height: Utils.size(20),
     },
     navh_con_title: {
         fontSize: Utils.size(18),

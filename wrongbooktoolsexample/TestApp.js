@@ -10,6 +10,7 @@ import PhotoTailor from "./src/MistakeRecoder/PhotoTailor";
 import TopicSelect from "./src/MistakeRecoder/TopicSelect";
 import ManualSelect from "./src/MistakeRecoder/ManualSelect";
 import ResultTest from "./src/MistakeRecoder/ResultTest";
+import PhotoEditor from "./src/MistakeRecoder/PhotoEditor";
 
 const Stack = createStackNavigator();
 
@@ -22,6 +23,7 @@ const RecordStackScreen = () => {
             <RecordStack.Screen name="TopicSelect" component={TopicSelect} />
             <RecordStack.Screen name="ManualSelect" component={ManualSelect} />
             <RecordStack.Screen name="ResultTest" component={ResultTest} />
+            <RecordStack.Screen name="PhotoEditor" component={PhotoEditor} />
         </RecordStack.Navigator >
     )
 }
