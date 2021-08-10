@@ -5496,6 +5496,10 @@ react-native-keyboard-aware-scroll-view@0.9.1:
     prop-types "^15.6.2"
     react-native-iphone-x-helper "^1.0.3"
 
+"react-native-palmmob3-wrongbook-tools@link:..":
+  version "0.0.0"
+  uid ""
+
 react-native-reanimated@^2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/react-native-reanimated/-/react-native-reanimated-2.2.0.tgz#a6412c56b4e591d1f00fac949f62d0c72c357c78"
