@@ -7,6 +7,8 @@ import { createStackNavigator } from '@react-navigation/stack';
 import PhotoSelect from "./PhotoSelect";
 import PhotoTailor from "./PhotoTailor";
 
+import SegmentSelector from "./SegmentSelector";
+
 const Stack = createStackNavigator();
 
 export default class Start extends Component {
@@ -21,7 +23,9 @@ export default class Start extends Component {
 
     }
 
-
+    optionSelectResult = (res) => {
+        console.log('选择了:', res)
+    }
 
     go = () => {
         this.props.navigation.navigate('Recorder')
@@ -29,8 +33,9 @@ export default class Start extends Component {
 
     render() {
         return (
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} >
-                <TouchableOpacity style={{ width: 100, height: 100, backgroundColor: 'orange', justifyContent: 'center', alignItems: 'center' }} onPress={this.go}>
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'orange' }} >
+                <SegmentSelector source={[{ title: '导入时间', options: ['全部', '近三天', '近七天', '近一个月'] }, { title: '科目', options: ['全部', '语文', '数学', '英语', '物理', '化学'] }, { title: '熟练程度', options: ['全部', '熟练', '生疏', '不懂'] }]} optionSelect={this.optionSelectResult} />
+                <TouchableOpacity style={{ marginTop: 50, width: 100, height: 100, backgroundColor: 'orange', justifyContent: 'center', alignItems: 'center' }} onPress={this.go}>
                     <Text style={{ fontSize: 25, color: 'white' }}>{'GO'}</Text>
                 </TouchableOpacity>
             </View>

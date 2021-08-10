@@ -3,12 +3,16 @@ import { Platform, StyleSheet, Text, View, Modal, TouchableHighlight, Image, Sta
 
 import Utils from "./Utils/Utils";
 import NavBar from "./Views/NavBar";
+import TopicMarker from "../../libs/TopicMarker";
+import * as LIBUtils from "../../libs/Utils";
 
 export default class TopicSelect extends Component {
     constructor(props) {
         super(props)
 
         this.state = {
+            markers: [],
+            selMarkerIndexs: []
         }
     }
 
@@ -21,6 +25,86 @@ export default class TopicSelect extends Component {
         this.props.navigation.pop()
     }
 
+    //手动框选
+    manual = () => {
+        this.props.navigation.navigate('ManualSelect', { imgUri: this.props.route?.params?.imgUri, img_w: this.props.route?.params?.img_w, img_h: this.props.route?.params?.img_h, addMark: (pdata) => { this.addMark(pdata) } })
+    }
+
+    //长按
+    markLongClick = (i, points, img_size, img_rect) => {
+        let ratio_w = img_size.width / img_rect.w
+        let ratio_h = img_size.height / img_rect.h
+        let eidtPs = [{ x: points[0].x / ratio_w, y: points[0].y / ratio_h }, { x: points[1].x / ratio_w, y: points[1].y / ratio_h }, { x: points[2].x / ratio_w, y: points[2].y / ratio_h }, { x: points[3].x / ratio_w, y: points[3].y / ratio_h }]
+        this.props.navigation.navigate('ManualSelect', { imgUri: this.props.route?.params?.imgUri, img_w: this.props.route?.params?.img_w, img_h: this.props.route?.params?.img_h, isEdit: true, editPoints: eidtPs, updateMark: (pdata) => { this.updateMark(i, pdata) }, deleteMark: () => { this.deleteMark(i) } })
+    }
+
+    //勾选单题
+    markStateChange = (i, selected) => {
+        let mks = this.state.markers
+        if (!mks || mks.length < i + 1) return
+        mks[i].isselected = selected
+        this.setState({
+            markers: mks,
+            selMarkerIndexs: this.getSelMarkers(mks)
+        })
+    }
+
+    addMark = (pdata) => {
+        if (!pdata || pdata.length < 4) return
+        let mks = this.state.markers.concat({ points: pdata, isselected: true })
+        this.setState({
+            markers: mks,
+            selMarkerIndexs: this.getSelMarkers(mks)
+        })
+    }
+
+    updateMark = (i, pdata) => {
+        let mks = this.state.markers
+        if (!mks || mks.length < i + 1) return
+        mks[i].points = pdata
+        this.setState({
+            markers: mks,
+            selMarkerIndexs: this.getSelMarkers(mks)
+        })
+    }
+
+    deleteMark = (i) => {
+        let mks = this.state.markers
+        if (!mks || mks.length < i + 1) return
+        mks.splice(i, 1)
+        this.setState({
+            markers: mks,
+            selMarkerIndexs: this.getSelMarkers(mks)
+        })
+    }
+
+    //
+    getSelMarkers = (markers) => {
+        let mks = markers ? markers : this.state.markers
+        if (!mks || mks.length < 1) return
+        let sels = []
+        for (let i = 0; i < mks.length; i++) {
+            const mk = mks[i]
+            if (mk.isselected) {
+                sels.push(i)
+            }
+        }
+        return sels
+    }
+
+    sure = async () => {
+        let selMarkers = []
+        for (let index in this.state.selMarkerIndexs) {
+            selMarkers.push(this.state.markers[index].points)
+        }
+
+        let cropResult = await LIBUtils.Utils.imgCrop(this.props.route?.params?.imgUri, selMarkers)
+
+        console.log('cropResult:', cropResult)
+
+        this.props.navigation.navigate('ResultTest', { imgUri: cropResult[0] })
+    }
+
     rightBtnRender = () => {
         return (
             <TouchableHighlight style={styles.rb}>
@@ -30,31 +114,39 @@ export default class TopicSelect extends Component {
     }
 
     render() {
+        const { imgUri, img_w, img_h } = this.props.route.params
+
         let botHeight = Utils.isIPhonex() ? Utils.size(105) + Utils.size(20) : Utils.size(105)
+        //
+        let navHeight = Platform.OS === 'ios' ? (Utils.isIPhonex() ? 88 : 64) : (44 + Utils.statusBarHeight)
+        let midHeight = Utils.deviceHeight - navHeight - botHeight
+
+        let sels = this.state.selMarkerIndexs ? this.state.selMarkerIndexs : []
+
         return (
             <View style={styles.topic}>
                 <NavBar title='选择题干' titleColor='black' bgColor='white' backAction={this.navBack} backImg={require('./Resources/back_black.png')} rightBtnRender={this.rightBtnRender} />
                 <View style={{ flex: 1 }}>
-
+                    <TopicMarker ref={e => { this.marker = e }} img={{ uri: imgUri }} imgSize={{ width: img_w, height: img_h }} containerSize={{ w: Utils.deviceWidth, h: midHeight }} markers={this.state.markers} markLongClick={this.markLongClick} markStateChange={this.markStateChange} />
                 </View>
                 <View style={[styles.bot, { height: botHeight }]}>
                     <Text style={styles.bot_t}>{'点击批量选择错题, 长按可编辑错题区域'}</Text>
                     <View style={styles.bot_btns}>
-                        <TouchableHighlight style={styles.bot_btns_lb}>
+                        <TouchableHighlight style={styles.bot_btns_lb} underlayColor='transparent' activeOpacity={1} onPress={this.navBack}>
                             <View style={styles.bot_btns_lb_v}>
                                 <Image style={styles.bot_btns_lb_img} source={require('./Resources/to_xiangji.png')} />
                                 <Text style={styles.bot_btns_lb_t}>{'重拍'}</Text>
                             </View>
                         </TouchableHighlight>
-                        <TouchableHighlight style={styles.bot_btns_lb}>
+                        <TouchableHighlight style={styles.bot_btns_lb} underlayColor='transparent' activeOpacity={1} onPress={this.manual}>
                             <View style={styles.bot_btns_lb_v}>
                                 <Image style={styles.bot_btns_lb_img} source={require('./Resources/to_shouzhi.png')} />
-                                <Text style={styles.bot_btns_lb_t}>{'重拍'}</Text>
+                                <Text style={styles.bot_btns_lb_t}>{'手动框题'}</Text>
                             </View>
                         </TouchableHighlight>
                         <View style={styles.bot_btns_rbv}>
-                            <TouchableHighlight style={styles.bot_btns_rb}>
-                                <Text style={styles.bot_btns_rb_t}>{'选择题干'}</Text>
+                            <TouchableHighlight style={[styles.bot_btns_rb, { backgroundColor: sels.length > 0 ? '#FFE600' : '#eeeeee' }]} underlayColor={sels.length > 0 ? '#FFE600' : '#eeeeee'} activeOpacity={0.7} onPress={this.sure} disabled={sels.length < 1}>
+                                <Text style={styles.bot_btns_rb_t}>{sels.length > 0 ? '加入错题本(' + sels.length + ')' : '加入错题本'}</Text>
                             </TouchableHighlight>
                         </View>
                     </View>
@@ -104,7 +196,7 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     bot_btns_lb: {
-        width: Utils.size(95),
+        width: Utils.size(75),
         height: Utils.size(75),
     },
     bot_btns_lb_v: {
@@ -130,11 +222,10 @@ const styles = StyleSheet.create({
     },
     bot_btns_rb: {
         marginRight: Utils.size(20),
-        width: Utils.size(105),
-        height: Utils.size(38),
+        width: Utils.size(124),
+        height: Utils.size(40),
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#eeeeee',
         borderRadius: Utils.size(20),
     },
     bot_btns_rb_t: {
