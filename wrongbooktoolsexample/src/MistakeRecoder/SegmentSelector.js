@@ -9,7 +9,7 @@ export default class SegmentSelector extends Component {
 
         this.state = {
             selIndex: -1,
-            optionSelIndexs: Array(this.props.source?.length ?? 0).fill(-1),
+            optionSelIndexs: Array(this.props.source?.length ?? 0).fill(0),
             modalVisible: false,
             barPosi: null
         }
@@ -36,7 +36,6 @@ export default class SegmentSelector extends Component {
     }
 
     barSelect = (index) => {
-        console.log('barSelect...')
         if (this.state.selIndex == index) {
             this.setState({
                 selIndex: -1,
@@ -62,17 +61,17 @@ export default class SegmentSelector extends Component {
 
     hdieOptions = () => {
         this.setState({
+            selIndex: -1,
             modalVisible: false
         })
     }
 
     coverClick = (e) => {
-        let loc_x = e?.nativeEvent?.locationX
-        let loc_y = e?.nativeEvent?.locationY
+        let loc_x = e?.nativeEvent?.pageX
+        let loc_y = e?.nativeEvent?.pageY
         if (!loc_x || !loc_y) return
         let cItemIndex = this.checkCoverClickItem(loc_x, loc_y)
-        let item_count = this.props.source?.length
-        if (cItemIndex != null && cItemIndex >= 0 && cItemIndex < item_count) {
+        if (cItemIndex != null) {
             this.barSelect(cItemIndex)
         }
     }
@@ -80,6 +79,7 @@ export default class SegmentSelector extends Component {
     checkCoverClickItem = (loc_x, loc_y) => {
         let barPosi = this.state.barPosi
         if (!barPosi || barPosi.length < 4) return null
+        if (loc_y < barPosi[1]) return null
         if (loc_y >= barPosi[1] && loc_y <= (barPosi[1] + barPosi[3]) && loc_x >= barPosi[0] && loc_x <= (barPosi[0] + barPosi[2])) {
             let item_count = this.props.source?.length
             if (!item_count) return null
@@ -87,7 +87,20 @@ export default class SegmentSelector extends Component {
             let click_index = parseInt(loc_x / item_w)
             return click_index
         }
-        return null
+        return this.state.selIndex
+    }
+
+    optionItemClick = (barSelIndex, itemIndex) => {
+        let oSelIndexs = this.state.optionSelIndexs
+        if (oSelIndexs[barSelIndex] === itemIndex) return
+        oSelIndexs[barSelIndex] = itemIndex
+        this.setState({
+            optionSelIndexs: oSelIndexs,
+            selIndex: -1,
+            modalVisible: false
+        }, () => {
+            this.props.optionSelect && this.props.optionSelect(oSelIndexs)
+        })
     }
 
     //source eg:[ {title:'导入时间',options:['全部','近三天','近七天']} ... ]
@@ -98,12 +111,15 @@ export default class SegmentSelector extends Component {
         let barPosi = this.state.barPosi
         let selIndex = this.state.selIndex
 
-        //当前选项
-        let currentOptions = (selIndex != null && selIndex != undefined && selIndex >= 0 && selIndex < source.length) ? source[selIndex].options : []
+        //当前子选项
+        let currentOptions = source[selIndex]?.options ?? []
+        //当前子选项选中
+        let currentOptionSelIndex = this.state.optionSelIndexs[selIndex]
+
         let item_margin = Utils.size(20)
         let count_onerow = 4
         let oItem_w = (Utils.deviceWidth - item_margin * (count_onerow + 1)) / count_onerow
-        let oItem_h = 40
+        let oItem_h = 35
         let rows = Math.ceil(currentOptions.length / count_onerow)
         let optionVH = item_margin * (rows + 1) + oItem_h * rows
 
@@ -112,10 +128,13 @@ export default class SegmentSelector extends Component {
                 <View ref={e => { this.barRef = e }} style={styles.seg_bar} onLayout={this.barLayout}>
                     {
                         source.map((item, i) => {
+                            let cOpts = source[i]?.options ?? []
+                            let oSelIdx = this.state.optionSelIndexs[i]
+                            let oSelTitle = cOpts[oSelIdx]
                             return (
                                 <TouchableHighlight key={i + ''} style={styles.seg_bar_item} underlayColor='transparent' activeOpacity={1} onPress={() => this.barSelect(i)}>
                                     <View style={styles.seg_bar_itemv}>
-                                        <Text style={[styles.seg_bar_item_t, { color: selIndex == i ? (barSelTitleColor ? barSelTitleColor : '#fad369') : (barTitleColor ? barTitleColor : '#333333') }]}>{item.title}</Text>
+                                        <Text style={[styles.seg_bar_item_t, { color: selIndex == i ? (barSelTitleColor ? barSelTitleColor : '#fad369') : (barTitleColor ? barTitleColor : '#333333') }]}>{oSelIdx == 0 ? item.title : oSelTitle}</Text>
                                         <Image style={[styles.seg_bar_item_img, { tintColor: selIndex == i ? (barSelTitleColor ? barSelTitleColor : '#fad369') : '#555555' }]} source={selIndex == i ? require('./Resources/lib_arrow_top.png') : require('./Resources/lib_arrow_bottom.png')} />
                                     </View>
                                 </TouchableHighlight>
@@ -132,17 +151,16 @@ export default class SegmentSelector extends Component {
                             transparent
                             onRequestClose={this.hdieOptions}
                         >
-                            <TouchableHighlight style={styles.seg_con} underlayColor='transparent' activeOpacity={1} onPress={this.coverClick}>
+                            <TouchableHighlight style={[styles.seg_con, {}]} underlayColor='transparent' activeOpacity={1} onPress={this.coverClick} >
                                 <View style={[styles.seg_con_v, { marginTop: barPosi[1] + barPosi[3] }]}>
                                     <View style={[styles.seg_con_itemv, { height: optionVH, backgroundColor: barBgColor ? barBgColor : 'white' }]}>
                                         {
                                             currentOptions.length > 0
                                                 ?
                                                 currentOptions.map((item, i) => {
-                                                    let currentOptionSelIndex = this.state.optionSelIndexs[selIndex]
                                                     return (
-                                                        < TouchableHighlight style={[styles.seg_con_itemv_item, { width: oItem_w, height: oItem_h, marginLeft: item_margin, marginTop: item_margin, backgroundColor: currentOptionSelIndex == i ? (itemSelBgColor ? itemSelBgColor : '#fad369') : (itemBgColor ? itemBgColor : '#f5f5f5') }]}>
-                                                            <Text style={[styles.seg_con_itemv_item_t, { color: currentOptionSelIndex == i ? (itemSelTitleColor ? itemSelTitleColor : '#333333') : (itemTitleColor ? itemTitleColor : '#444444') }]}>{item}</Text>
+                                                        < TouchableHighlight key={i + ''} style={[styles.seg_con_itemv_item, { width: oItem_w, height: oItem_h, marginLeft: item_margin, marginTop: item_margin, backgroundColor: currentOptionSelIndex == i ? (itemSelBgColor ? itemSelBgColor : '#fad369') : (itemBgColor ? itemBgColor : '#eff0f2') }]} underlayColor={currentOptionSelIndex == i ? (itemSelBgColor ? itemSelBgColor : '#fad369') : (itemBgColor ? itemBgColor : '#eff0f2')} activeOpacity={0.7} onPress={() => { this.optionItemClick(selIndex, i) }}>
+                                                            <Text style={[styles.seg_con_itemv_item_t, { maxWidth: oItem_w - 2, color: currentOptionSelIndex == i ? (itemSelTitleColor ? itemSelTitleColor : '#333333') : (itemTitleColor ? itemTitleColor : '#919193') }]} numberOfLines={1}>{item}</Text>
                                                         </TouchableHighlight>
                                                     )
                                                 })
@@ -197,22 +215,23 @@ const styles = StyleSheet.create({
     },
     seg_con_v: {
         flex: 1,
-        backgroundColor: 'rgba(0,0,0,0.5)'
+        backgroundColor: 'rgba(0,0,0,0.35)'
     },
     seg_con_itemv: {
         width: Utils.deviceWidth,
         flexDirection: 'row',
         flexWrap: 'wrap',
-        borderBottomLeftRadius: Utils.size(8),
-        borderBottomRightRadius: Utils.size(8)
+        borderBottomLeftRadius: Utils.size(15),
+        borderBottomRightRadius: Utils.size(15)
     },
     seg_con_itemv_item: {
         justifyContent: 'center',
         alignItems: 'center',
-        borderRadius: Utils.size(5)
+        borderRadius: Utils.size(5),
+        overflow: 'hidden'
     },
     seg_con_itemv_item_t: {
-        fontSize: Utils.size(14),
+        fontSize: Utils.size(15),
         fontWeight: '500',
     },
     seg: {
