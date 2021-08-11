@@ -1,4 +1,5 @@
 import ImageEditor from "@react-native-community/image-editor";
+import ImageResizer from 'react-native-image-resizer';
 
 class Utils {
 
@@ -78,6 +79,21 @@ class Utils {
             }
         }
         return res
+    }
+
+    //rotation: 0/90/180/270...
+    static imgResize(imgUri, toImgW, toImgH, rotation, callback) {
+        ImageResizer.createResizedImage(imgUri, toImgW, toImgH, 'JPEG', 100, rotation, null, false, { mode: 'contain', onlyScaleDown: false })
+            .then(res => {
+                if (res && res.uri && res.uri.length > 0) {
+                    callback && callback([res.uri, res.width, res.height])
+                    return
+                }
+                callback && callback(null)
+            })
+            .catch(err => {
+                callback && callback(null)
+            });
     }
 }
 

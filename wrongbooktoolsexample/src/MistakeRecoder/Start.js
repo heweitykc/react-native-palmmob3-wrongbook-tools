@@ -2,7 +2,7 @@ import React, { Component, PureComponent } from 'react';
 import { Platform, StyleSheet, Text, View, Modal, TouchableOpacity } from 'react-native';
 
 import { createStackNavigator } from '@react-navigation/stack';
-
+import ImageResizer from 'react-native-image-resizer';
 import SegmentSelector from "./SegmentSelector";
 
 import { launchImageLibrary } from 'react-native-image-picker';
@@ -43,6 +43,18 @@ export default class Start extends Component {
             if (res && !res.didCancel) {
                 if (res.assets && res.assets[0] && res.assets[0].uri && res.assets[0].uri.length > 0) {
                     this.props.navigation.navigate('Recorder', { screen: 'PhotoEditor', params: { imgUri: res.assets[0].uri, img_w: res.assets[0].width, img_h: res.assets[0].height } })
+
+                    //ResultTest 
+                    // let oriw = res.assets[0].width
+                    // let orih = res.assets[0].height
+                    // ImageResizer.createResizedImage(res.assets[0].uri, oriw, orih, 'JPEG', 100, 180, null, false, { mode: 'stretch', onlyScaleDown: false }).then(resizedImage => {
+                    //     console.log('resizedImage:', resizedImage)
+                    //     this.props.navigation.navigate('Recorder', { screen: 'ResultTest', params: { imgUri: resizedImage.uri } })
+                    // })
+                    //     .catch(err => {
+                    //         console.log(err);
+                    //     });
+
                     return
                 }
                 this.hud && this.hud.showTip('无数据,请重新选择')
