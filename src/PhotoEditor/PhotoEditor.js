@@ -14,9 +14,10 @@ export default class PhotoEditor extends Component {
         super(props)
 
         this.state = {
-            imgUri: this.props.route?.params?.imgUri,
-            img_w: this.props.route?.params?.img_w,
-            img_h: this.props.route?.params?.img_h,
+            visible: false,
+            imgUri: this.props.imgUri,
+            img_w: this.props.img_w,
+            img_h: this.props.img_h,
             barType: -1,              //barType: -1 toolbar  0 text  1 crop  2 rotate  3 clean
             cleanPencilType: 0           //0/1/2
         }
@@ -34,12 +35,28 @@ export default class PhotoEditor extends Component {
 
     }
 
+    UNSAFE_componentWillReceiveProps(nextProps) {
+        this.setState({
+            imgUri: nextProps.imgUri,
+            img_w: nextProps.img_w,
+            img_h: nextProps.img_h,
+        })
+    }
+
     componentWillUnmount() {
         console.log('PhotoEditor release..')
     }
 
-    navBack = () => {
-        this.props.navigation.pop()
+    show = () => {
+        this.setState({
+            visible: true
+        })
+    }
+
+    dismiss = () => {
+        this.setState({
+            visible: false
+        })
     }
 
     tBarClick = (selBarType, type) => {
@@ -174,7 +191,7 @@ export default class PhotoEditor extends Component {
     }
     sureCrop = async () => {
         if (!this.cropResultPoints || this.cropResultPoints.length < 4) return
-        let cropResult = await LIBUtils.Utils.imgCrop(this.state.imgUri, [this.cropResultPoints])
+        let cropResult = await Utils.imgCrop(this.state.imgUri, [this.cropResultPoints])
         console.log('cropResult:', cropResult)
         if (cropResult && cropResult.length > 0) {
             let img_w = this.cropResultPoints[1].x - this.cropResultPoints[0].x
@@ -184,6 +201,8 @@ export default class PhotoEditor extends Component {
                 img_w: img_w,
                 img_h: img_h,
                 barType: -1
+            }, () => {
+                this.resultUpdate()
             })
             this.cropResultPoints = null
         }
@@ -213,13 +232,15 @@ export default class PhotoEditor extends Component {
             return
         }
         let max = Math.max(this.state.img_w, this.state.img_h)
-        LIBUtils.Utils.imgResize(this.state.imgUri, max, max, rotation, (res) => {
+        Utils.imgResize(this.state.imgUri, max, max, rotation, (res) => {
             if (res) {
                 this.setState({
                     imgUri: res[0],
                     img_w: res[1],
                     img_h: res[2],
                     barType: -1
+                }, () => {
+                    this.resultUpdate()
                 })
                 this.toRotation = 0
             }
@@ -245,6 +266,8 @@ export default class PhotoEditor extends Component {
                 barType: -1,
                 cleanPencilType: 0,
                 imgUri: res
+            }, () => {
+                this.resultUpdate()
             })
             return
         }
@@ -258,6 +281,11 @@ export default class PhotoEditor extends Component {
             cleanPencilType: type
         })
         this.cleanUtil && this.cleanUtil.setPencilWidth(type)
+    }
+
+    //result back
+    resultUpdate = () => {
+        this.props.resultCallback && this.props.resultCallback(this.state.imgUri, this.state.img_w, this.state.img_h)
     }
 
     //bar render
@@ -449,52 +477,59 @@ export default class PhotoEditor extends Component {
         let img_rect = Utils.computePaperLayout(0, { width: img_w, height: img_h }, { w: Utils.deviceWidth, h: midHeight })
 
         return (
-            <View style={styles.edi} >
-                <NavBar title='错题编辑' titleColor='white' bgColor='transparent' backAction={this.navBack} backImg={require('../Assets/lib_close_white.png')} />
-                <View style={styles.con}>
-                    <Image source={{ uri: imgUri }} resizeMode={'stretch'} style={[{ width: img_rect.w, height: img_rect.h, transform: [{ translateX: img_rect.x }, { translateY: img_rect.y }] }]} />
-                    {
-                        this.state.barType === -1
-                            ?
-                            null
-                            :
-                            <View style={[styles.con_editor, {}]}>
-                                {
-                                    this.state.barType === 0
-                                    && <AddTextUtil ref={e => { this.addTextUtil = e }} imgUri={imgUri} img_w={img_w} img_h={img_h} containerSize={{ w: Utils.deviceWidth, h: midHeight }} onSaveResult={this.addTextSaveResult} />
-                                }
-                                {
-                                    this.state.barType === 1
-                                    && <DragCutBlock
-                                        dragsize={[150, 50]}
-                                        regular={true}
-                                        paperBg={{ uri: imgUri }}
-                                        onMove={this.onMove}
-                                        imageSize={{ width: img_w, height: img_h }}
-                                        imageRect={img_rect}
-                                        imageRotation={0}
-                                        inUse={true}
-                                    />
-                                }
-                                {
-                                    this.state.barType === 2
-                                    && <RotateUtil ref={e => { this.rotateUtil = e }} imgUri={imgUri} img_w={img_w} img_h={img_h} containerSize={{ w: Utils.deviceWidth, h: midHeight }} />
-                                }
-                                {
-                                    this.state.barType === 3
-                                    && <CleanUtil ref={e => { this.cleanUtil = e }} imgUri={imgUri} img_w={img_w} img_h={img_h} containerSize={{ w: Utils.deviceWidth, h: midHeight }} onSaveResult={this.onSaveResult} />
-                                }
-                            </View>
-                    }
-                </View>
-                <View style={[styles.bot, { height: botHeight }]}>
-                    <View style={[styles.bot_con, { height: this.getBotVH(this.state.barType, true), marginBottom: Utils.isIPhonex() ? Utils.size(20) : 0 }]}>
+            <Modal
+                visible={this.state.visible}
+                animationType='slide'
+                transparent
+                onRequestClose={this.dismiss}
+            >
+                <View style={styles.edi} >
+                    <NavBar title='错题编辑' titleColor='white' bgColor='transparent' backAction={this.dismiss} backImg={require('../Assets/lib_close_white.png')} />
+                    <View style={styles.con}>
+                        <Image source={{ uri: imgUri }} resizeMode={'stretch'} style={[{ width: img_rect.w, height: img_rect.h, transform: [{ translateX: img_rect.x }, { translateY: img_rect.y }] }]} />
                         {
-                            this.bottomBarRender(this.state.barType)
+                            this.state.barType === -1
+                                ?
+                                null
+                                :
+                                <View style={[styles.con_editor, {}]}>
+                                    {
+                                        this.state.barType === 0
+                                        && <AddTextUtil ref={e => { this.addTextUtil = e }} imgUri={imgUri} img_w={img_w} img_h={img_h} containerSize={{ w: Utils.deviceWidth, h: midHeight }} onSaveResult={this.addTextSaveResult} />
+                                    }
+                                    {
+                                        this.state.barType === 1
+                                        && <DragCutBlock
+                                            dragsize={[150, 50]}
+                                            regular={true}
+                                            paperBg={{ uri: imgUri }}
+                                            onMove={this.onMove}
+                                            imageSize={{ width: img_w, height: img_h }}
+                                            imageRect={img_rect}
+                                            imageRotation={0}
+                                            inUse={true}
+                                        />
+                                    }
+                                    {
+                                        this.state.barType === 2
+                                        && <RotateUtil ref={e => { this.rotateUtil = e }} imgUri={imgUri} img_w={img_w} img_h={img_h} containerSize={{ w: Utils.deviceWidth, h: midHeight }} />
+                                    }
+                                    {
+                                        this.state.barType === 3
+                                        && <CleanUtil ref={e => { this.cleanUtil = e }} imgUri={imgUri} img_w={img_w} img_h={img_h} containerSize={{ w: Utils.deviceWidth, h: midHeight }} onSaveResult={this.onSaveResult} />
+                                    }
+                                </View>
                         }
                     </View>
+                    <View style={[styles.bot, { height: botHeight }]}>
+                        <View style={[styles.bot_con, { height: this.getBotVH(this.state.barType, true), marginBottom: Utils.isIPhonex() ? Utils.size(20) : 0 }]}>
+                            {
+                                this.bottomBarRender(this.state.barType)
+                            }
+                        </View>
+                    </View>
                 </View>
-            </View>
+            </Modal>
         )
     }
 
