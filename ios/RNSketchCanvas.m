@@ -11,13 +11,13 @@
     RCTEventDispatcher *_eventDispatcher;
     NSMutableArray *_paths;
     RNSketchData *_currentPath;
-
+    
     CGSize _lastSize;
-
+    
     CGContextRef _drawingContext, _translucentDrawingContext;
     CGImageRef _frozenImage, _translucentFrozenImage;
     BOOL _needsFullRedraw;
-
+    
     UIImage *_backgroundImage;
     UIImage *_backgroundImageScaled;
     NSString *_backgroundImageContentMode;
@@ -32,7 +32,7 @@
         _eventDispatcher = eventDispatcher;
         _paths = [NSMutableArray new];
         _needsFullRedraw = YES;
-
+        
         self.backgroundColor = [UIColor clearColor];
         self.clearsContextBeforeDrawing = YES;
     }
@@ -41,9 +41,9 @@
 
 - (void)drawRect:(CGRect)rect {
     CGContextRef context = UIGraphicsGetCurrentContext();
-
+    
     CGRect bounds = self.bounds;
-
+    
     if (_needsFullRedraw) {
         [self setFrozenImageNeedsUpdate];
         CGContextClearRect(_drawingContext, bounds);
@@ -52,7 +52,7 @@
         }
         _needsFullRedraw = NO;
     }
-
+    
     if (!_frozenImage) {
         _frozenImage = CGBitmapContextCreateImage(_drawingContext);
     }
@@ -60,15 +60,15 @@
     if (!_translucentFrozenImage && _currentPath.isTranslucent) {
         _translucentFrozenImage = CGBitmapContextCreateImage(_translucentDrawingContext);
     }
-
+    
     if (_backgroundImage) {
         if (!_backgroundImageScaled) {
             _backgroundImageScaled = [self scaleImage:_backgroundImage toSize:bounds.size contentMode: _backgroundImageContentMode];
         }
-
+        
         [_backgroundImageScaled drawInRect:bounds];
     }
-
+    
     for (CanvasText *text in _arrSketchOnText) {
         [text.text drawInRect: text.drawRect withAttributes: text.attribute];
     }
@@ -76,7 +76,7 @@
     if (_frozenImage) {
         CGContextDrawImage(context, bounds, _frozenImage);
     }
-
+    
     if (_translucentFrozenImage && _currentPath.isTranslucent) {
         CGContextDrawImage(context, bounds, _translucentFrozenImage);
     }
@@ -88,7 +88,7 @@
 
 - (void)layoutSubviews {
     [super layoutSubviews];
-
+    
     if (!CGSizeEqualToSize(self.bounds.size, _lastSize)) {
         _lastSize = self.bounds.size;
         CGContextRelease(_drawingContext);
@@ -121,7 +121,7 @@
     _drawingContext = CGBitmapContextCreate(nil, size.width, size.height, 8, 0, colorSpace, kCGImageAlphaPremultipliedLast);
     _translucentDrawingContext = CGBitmapContextCreate(nil, size.width, size.height, 8, 0, colorSpace, kCGImageAlphaPremultipliedLast);
     CGColorSpaceRelease(colorSpace);
-
+    
     CGContextConcatCTM(_drawingContext, CGAffineTransformMakeScale(scale, scale));
     CGContextConcatCTM(_translucentDrawingContext, CGAffineTransformMakeScale(scale, scale));
 }
@@ -149,7 +149,7 @@
             _backgroundImageScaled = nil;
             _backgroundImageContentMode = mode;
             [self setNeedsDisplay];
-
+            
             return YES;
         }
     }
@@ -160,10 +160,10 @@
     NSMutableArray *arrTextOnSketch = [NSMutableArray new];
     NSMutableArray *arrSketchOnText = [NSMutableArray new];
     NSDictionary *alignments = @{
-                                 @"Left": [NSNumber numberWithInteger:NSTextAlignmentLeft],
-                                 @"Center": [NSNumber numberWithInteger:NSTextAlignmentCenter],
-                                 @"Right": [NSNumber numberWithInteger:NSTextAlignmentRight]
-                                 };
+        @"Left": [NSNumber numberWithInteger:NSTextAlignmentLeft],
+        @"Center": [NSNumber numberWithInteger:NSTextAlignmentCenter],
+        @"Right": [NSNumber numberWithInteger:NSTextAlignmentRight]
+    };
     
     for (NSDictionary *property in aText) {
         if (property[@"text"]) {
@@ -181,11 +181,11 @@
             }
             text.font = font;
             text.anchor = property[@"anchor"] == nil ?
-                CGPointMake(0, 0) :
-                CGPointMake([property[@"anchor"][@"x"] floatValue], [property[@"anchor"][@"y"] floatValue]);
+            CGPointMake(0, 0) :
+            CGPointMake([property[@"anchor"][@"x"] floatValue], [property[@"anchor"][@"y"] floatValue]);
             text.position = property[@"position"] == nil ?
-                CGPointMake(0, 0) :
-                CGPointMake([property[@"position"][@"x"] floatValue], [property[@"position"][@"y"] floatValue]);
+            CGPointMake(0, 0) :
+            CGPointMake([property[@"position"][@"x"] floatValue], [property[@"position"][@"y"] floatValue]);
             long color = property[@"fontColor"] == nil ? 0xFF000000 : [property[@"fontColor"] longValue];
             UIColor *fontColor =
             [UIColor colorWithRed:(CGFloat)((color & 0x00FF0000) >> 16) / 0xFF
@@ -197,10 +197,10 @@
             style.alignment = [alignments[a] integerValue];
             style.lineHeightMultiple = property[@"lineHeightMultiple"] ? [property[@"lineHeightMultiple"] floatValue] : 1.0;
             text.attribute = @{
-                               NSFontAttributeName:font,
-                               NSForegroundColorAttributeName:fontColor,
-                               NSParagraphStyleAttributeName:style
-                               };
+                NSFontAttributeName:font,
+                NSForegroundColorAttributeName:fontColor,
+                NSParagraphStyleAttributeName:style
+            };
             text.isAbsoluteCoordinate = ![@"Ratio" isEqualToString:property[@"coordinate"]];
             CGSize textSize = [text.text sizeWithAttributes:text.attribute];
             
@@ -270,14 +270,14 @@
 - (void)addPointX: (float)x Y: (float)y {
     CGPoint newPoint = CGPointMake(x, y);
     CGRect updateRect = [_currentPath addPoint: newPoint];
-
+    
     if (_currentPath.isTranslucent) {
         CGContextClearRect(_translucentDrawingContext, self.bounds);
         [_currentPath drawInContext:_translucentDrawingContext];
     } else {
         [_currentPath drawLastPointInContext:_drawingContext];
     }
-
+    
     [self setFrozenImageNeedsUpdate];
     [self setNeedsDisplayInRect:updateRect];
 }
@@ -379,7 +379,7 @@
             NSURL *fileURL = [[tempDir URLByAppendingPathComponent: filename] URLByAppendingPathExtension: type];
             NSData *imageData = [self getImageData:img type:type];
             [imageData writeToURL:fileURL atomically:YES];
-
+            
             if (_onChange) {
                 _onChange(@{ @"success": @YES, @"path": [fileURL path]});
             }
@@ -398,19 +398,24 @@
 
 - (UIImage *)scaleImage:(UIImage *)originalImage toSize:(CGSize)size contentMode: (NSString*)mode
 {
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    CGContextRef context = CGBitmapContextCreate(NULL, size.width, size.height, 8, 0, colorSpace, kCGImageAlphaPremultipliedLast);
-    CGContextClearRect(context, CGRectMake(0, 0, size.width, size.height));
-
-    CGRect targetRect = [Utility fillImageWithSize:originalImage.size toSize:size contentMode:mode];
-    CGContextDrawImage(context, targetRect, originalImage.CGImage);
+    //    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    //    CGContextRef context = CGBitmapContextCreate(NULL, size.width, size.height, 8, 0, colorSpace, kCGImageAlphaPremultipliedLast);
+    //    CGContextClearRect(context, CGRectMake(0, 0, size.width, size.height));
+    //
+    //    CGRect targetRect = [Utility fillImageWithSize:originalImage.size toSize:originalImage.size contentMode:mode];
+    //    CGContextDrawImage(context, CGRectMake(0, 0, size.width, size.height), originalImage.CGImage);
+    //
+    //    CGImageRef scaledImage = CGBitmapContextCreateImage(context);
+    //    CGColorSpaceRelease(colorSpace);
+    //    CGContextRelease(context);
+    //
+    //    UIImage *image = [UIImage imageWithCGImage:scaledImage];
+    //    CGImageRelease(scaledImage);
     
-    CGImageRef scaledImage = CGBitmapContextCreateImage(context);
-    CGColorSpaceRelease(colorSpace);
-    CGContextRelease(context);
-    
-    UIImage *image = [UIImage imageWithCGImage:scaledImage];
-    CGImageRelease(scaledImage);
+    UIGraphicsBeginImageContextWithOptions(size, NO, [UIScreen mainScreen].scale);  //size 为CGSize类型，即你所需要的图片尺寸
+    [originalImage drawInRect:CGRectMake(0, 0, size.width, size.height)];
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
     
     return image;
 }

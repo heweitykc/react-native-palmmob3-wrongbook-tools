@@ -118,8 +118,8 @@
 - (void)drawInContext:(CGContextRef)context {
     if (_isTranslucent) {
         CGContextSetLineWidth(context, _strokeWidth);
-        CGContextSetLineCap(context, kCGLineCapRound);
-        CGContextSetLineJoin(context, kCGLineJoinRound);
+        CGContextSetLineCap(context, kCGLineCapButt);
+        CGContextSetLineJoin(context, kCGLineJoinMiter);
         CGContextSetStrokeColorWithColor(context, [_strokeColor CGColor]);
         CGContextSetBlendMode(context, kCGBlendModeNormal);
         
@@ -143,8 +143,8 @@
 
     CGContextSetStrokeColorWithColor(context, _strokeColor.CGColor);
     CGContextSetLineWidth(context, _strokeWidth);
-    CGContextSetLineCap(context, kCGLineCapRound);
-    CGContextSetLineJoin(context, kCGLineJoinRound);
+    CGContextSetLineCap(context, kCGLineCapButt);
+    CGContextSetLineJoin(context, kCGLineJoinMiter);
     CGContextSetBlendMode(context, isErase ? kCGBlendModeClear : kCGBlendModeNormal);
     CGContextBeginPath(context);
 
