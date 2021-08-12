@@ -113,15 +113,15 @@ const styles = StyleSheet.create({
     },
     loadcon: {
         backgroundColor: '#333333',
-        height: Utils.size(100),
-        width: Utils.size(100),
+        height: Utils.size(120),
+        width: Utils.size(120),
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: Utils.size(8)
     },
     loadcon_t: {
         marginTop: Utils.size(15),
-        fontSize: Utils.size(17),
+        fontSize: Utils.size(15),
         color: '#ffffff',
         fontWeight: '600',
     },
