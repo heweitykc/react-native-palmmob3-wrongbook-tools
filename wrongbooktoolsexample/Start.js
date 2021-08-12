@@ -77,7 +77,7 @@ export default class Start extends Component {
     render() {
         return (
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'orange' }} >
-                <SegmentSelector source={[{ title: '导入时间', options: ['全部', '近三天', '近七天', '近一个月'] }, { title: '科目', options: ['全部', '语文', '数学', '英语', '物理', '化学'] }, { title: '熟练程度', options: ['全部', '熟练', '生疏', '不懂'] }]} optionSelect={this.optionSelectResult} />
+                <SegmentSelector barHeight={80} source={[{ title: '导入时间', options: [{ text: '近0天', value: 0 }, { text: '近1天', value: 0 }, { text: '近2天', value: 0 }] }, { title: '导入时间', options: [{ text: '近三天', value: 0 }, { text: '近三天', value: 0 }, { text: '近三天', value: 0 }] }]} optionSelect={this.optionSelectResult} />
                 <TouchableOpacity style={{ marginTop: 50, width: 100, height: 100, backgroundColor: 'orange', justifyContent: 'center', alignItems: 'center' }} onPress={this.go}>
                     <Text style={{ fontSize: 25, color: 'white' }}>{'GO'}</Text>
                 </TouchableOpacity>

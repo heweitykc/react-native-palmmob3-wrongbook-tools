@@ -16,7 +16,6 @@ export default class SegmentSelector extends Component {
     }
 
     componentDidMount() {
-
     }
 
     barLayout = (e) => {
@@ -25,7 +24,7 @@ export default class SegmentSelector extends Component {
 
     getBarPosition = (update = true, callback) => {
         this.barRef && this.barRef.measure((x, y, w, h, left, top) => {
-            console.log(x, y, w, h, left, top)
+            console.log('getBarPosition:', x, y, w, h, left, top)
             if (update) {
                 this.setState({
                     barPosi: [left, top, w, h]
@@ -99,13 +98,22 @@ export default class SegmentSelector extends Component {
             selIndex: -1,
             modalVisible: false
         }, () => {
-            this.props.optionSelect && this.props.optionSelect(oSelIndexs)
+            this.optionSelectResult()
         })
     }
 
-    //source eg:[ {title:'导入时间',options:['全部','近三天','近七天']} ... ]
+    optionSelectResult = () => {
+        let source = this.props.source
+        let selResult = []
+        for (let i = 0; i < source.length; i++) {
+            selResult.push(source[i].options[this.state.optionSelIndexs[i]])
+        }
+        this.props.optionSelect && this.props.optionSelect(selResult)
+    }
+
+    //source eg:[ {title:'导入时间',options:[ {text:'全部',value:0}, {text:'近七天',value:1}, {text:'近一个月',value:2} ]} ... ]
     render() {
-        const { barBgColor, barTitleColor, barSelTitleColor, itemBgColor, itemSelBgColor, itemTitleColor, itemSelTitleColor, source } = this.props
+        const { barHeight, barBgColor, barTitleColor, barSelTitleColor, itemBgColor, itemSelBgColor, itemTitleColor, itemSelTitleColor, source } = this.props
         if (!source || source.length < 1) return null
 
         let barPosi = this.state.barPosi
@@ -124,16 +132,16 @@ export default class SegmentSelector extends Component {
         let optionVH = item_margin * (rows + 1) + oItem_h * rows
 
         return (
-            <View style={[styles.seg, { backgroundColor: barBgColor ? barBgColor : 'white' }, this.props.style]} >
-                <View ref={e => { this.barRef = e }} style={styles.seg_bar} onLayout={this.barLayout}>
+            <View style={[styles.seg, { height: barHeight ? barHeight : Utils.size(50), backgroundColor: barBgColor ? barBgColor : 'white' }, this.props.style]} >
+                <View ref={e => { this.barRef = e }} style={[styles.seg_bar, { height: barHeight ? barHeight : Utils.size(50) }]} onLayout={this.barLayout}>
                     {
                         source.map((item, i) => {
                             let cOpts = source[i]?.options ?? []
                             let oSelIdx = this.state.optionSelIndexs[i]
-                            let oSelTitle = cOpts[oSelIdx]
+                            let oSelTitle = cOpts[oSelIdx].text
                             return (
-                                <TouchableHighlight key={i + ''} style={styles.seg_bar_item} underlayColor='transparent' activeOpacity={1} onPress={() => this.barSelect(i)}>
-                                    <View style={styles.seg_bar_itemv}>
+                                <TouchableHighlight key={i + '_title'} style={styles.seg_bar_item} underlayColor='transparent' activeOpacity={1} onPress={() => this.barSelect(i)}>
+                                    <View style={[styles.seg_bar_itemv, { height: barHeight ? barHeight : Utils.size(50) }]}>
                                         <Text style={[styles.seg_bar_item_t, { color: selIndex == i ? (barSelTitleColor ? barSelTitleColor : '#fad369') : (barTitleColor ? barTitleColor : '#333333') }]}>{oSelIdx == 0 ? item.title : oSelTitle}</Text>
                                         <Image style={[styles.seg_bar_item_img, { tintColor: selIndex == i ? (barSelTitleColor ? barSelTitleColor : '#fad369') : '#555555' }]} source={selIndex == i ? require('../Assets/lib_arrow_top.png') : require('../Assets/lib_arrow_bottom.png')} />
                                     </View>
@@ -152,15 +160,15 @@ export default class SegmentSelector extends Component {
                             onRequestClose={this.hdieOptions}
                         >
                             <TouchableHighlight style={[styles.seg_con, {}]} underlayColor='transparent' activeOpacity={1} onPress={this.coverClick} >
-                                <View style={[styles.seg_con_v, { marginTop: barPosi[1] + barPosi[3] }]}>
+                                <View style={[styles.seg_con_v, { marginTop: (barPosi[1] + barPosi[3]) }]}>
                                     <View style={[styles.seg_con_itemv, { height: optionVH, backgroundColor: barBgColor ? barBgColor : 'white' }]}>
                                         {
                                             currentOptions.length > 0
                                                 ?
                                                 currentOptions.map((item, i) => {
                                                     return (
-                                                        < TouchableHighlight key={i + ''} style={[styles.seg_con_itemv_item, { width: oItem_w, height: oItem_h, marginLeft: item_margin, marginTop: item_margin, backgroundColor: currentOptionSelIndex == i ? (itemSelBgColor ? itemSelBgColor : '#fad369') : (itemBgColor ? itemBgColor : '#eff0f2') }]} underlayColor={currentOptionSelIndex == i ? (itemSelBgColor ? itemSelBgColor : '#fad369') : (itemBgColor ? itemBgColor : '#eff0f2')} activeOpacity={0.7} onPress={() => { this.optionItemClick(selIndex, i) }}>
-                                                            <Text style={[styles.seg_con_itemv_item_t, { maxWidth: oItem_w - 2, color: currentOptionSelIndex == i ? (itemSelTitleColor ? itemSelTitleColor : '#333333') : (itemTitleColor ? itemTitleColor : '#919193') }]} numberOfLines={1}>{item}</Text>
+                                                        < TouchableHighlight key={i + '_item'} style={[styles.seg_con_itemv_item, { width: oItem_w, height: oItem_h, marginLeft: item_margin, marginTop: item_margin, backgroundColor: currentOptionSelIndex == i ? (itemSelBgColor ? itemSelBgColor : '#fad369') : (itemBgColor ? itemBgColor : '#eff0f2') }]} underlayColor={currentOptionSelIndex == i ? (itemSelBgColor ? itemSelBgColor : '#fad369') : (itemBgColor ? itemBgColor : '#eff0f2')} activeOpacity={0.7} onPress={() => { this.optionItemClick(selIndex, i) }}>
+                                                            <Text style={[styles.seg_con_itemv_item_t, { maxWidth: oItem_w - 2, color: currentOptionSelIndex == i ? (itemSelTitleColor ? itemSelTitleColor : '#333333') : (itemTitleColor ? itemTitleColor : '#919193') }]} numberOfLines={1}>{item.text}</Text>
                                                         </TouchableHighlight>
                                                     )
                                                 })
@@ -183,11 +191,9 @@ export default class SegmentSelector extends Component {
 const styles = StyleSheet.create({
     seg: {
         width: Utils.deviceWidth,
-        height: Utils.size(50),
     },
     seg_bar: {
         width: Utils.deviceWidth,
-        height: Utils.size(50),
         flexDirection: 'row',
         alignItems: 'stretch',
     },
@@ -196,7 +202,6 @@ const styles = StyleSheet.create({
     },
     seg_bar_itemv: {
         flex: 1,
-        height: Utils.size(50),
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center'
