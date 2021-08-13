@@ -128,7 +128,7 @@ export default class Utils {
             }
             let cropResult = await ImageEditor.cropImage(imgUri, crop)
             if (cropResult && cropResult.length > 0) {
-                res.push(cropResult)
+                res.push({ uri: cropResult, width: cdata[1].x - cdata[0].x, height: cdata[2].y - cdata[0].y })
             }
         }
         return res
