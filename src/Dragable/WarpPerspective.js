@@ -11,6 +11,7 @@ class WarpPerspective extends React.Component {
 
   onMove(posdata) {
     console.log('posdata:', posdata);
+    this.props.onMove && this.props.onMove(posdata)
   }
 
   toggleFacing() {

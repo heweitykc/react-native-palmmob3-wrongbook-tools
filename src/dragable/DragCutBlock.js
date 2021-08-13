@@ -293,7 +293,7 @@ class DragCutBlock extends React.Component {
             transform: [{ translateX: img_rect.x }, { translateY: img_rect.y }, { rotateZ: rotateStr }]
           }
         ]} >
-        <Svg width={img_rect.w} height={img_rect.h} fill="rgba(255, 229, 0, 0.2)" >
+        <Svg width={img_rect.w} height={img_rect.h} fill="rgba(255, 229, 0, 0.05)" >
           <Path d={path} stroke="#FFE600" />
         </Svg>
         <RoundConnector limition={this.state.center_limition} dragsize={[Math.min(path_w, path_w2, path_h, path_h2), Math.min(path_w, path_w2, path_h, path_h2)]} ref={(ref) => { this.connector0 = ref }} rotation={this.imageRotation} onMove={this.onMove0.bind(this)} onMovePan={this.onMovePan0.bind(this)} onStartPan={this.onStartPan0.bind(this)} onReleasePan={this.onReleasePan0.bind(this)} title={"0"} startPos={this.startp0} isShow={false} />
