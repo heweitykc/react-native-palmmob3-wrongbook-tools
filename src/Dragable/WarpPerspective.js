@@ -24,7 +24,7 @@ class WarpPerspective extends React.Component {
 
   render() {
     let imageRotation = this.props.imgRotation;
-    let img_rect = Utils.computePaperLayout(imageRotation, this.props.imageSize, this.props);
+    let img_rect = Utils.computePaperLayout(imageRotation, this.props.imageSize, this.props, this.props.needMargin);
     console.log("img_rect=", img_rect);
     return (
       <View style={[{ width: this.props.w, height: this.props.h, alignItems: "flex-start", justifyContent: "flex-start", backgroundColor: '#000000', position: 'absolute', overflow: 'hidden' }, this.props.style]} >
