@@ -280,6 +280,10 @@ class DragCutBlock extends React.Component {
     let img_rect = this.imageRect;
     let path = `M ${this.state.point1.x} ${this.state.point1.y} L ${this.state.point2.x} ${this.state.point2.y} L ${this.state.point4.x} ${this.state.point4.y} L ${this.state.point3.x} ${this.state.point3.y} L ${this.state.point1.x} ${this.state.point1.y} `;
     console.log(path);
+    let path_w = this.state.point2.x - this.state.point1.x
+    let path_w2 = this.state.point4.x - this.state.point3.x
+    let path_h = this.state.point3.y - this.state.point1.y
+    let path_h2 = this.state.point4.y - this.state.point2.y
     return (
       <ImageBackground source={this.paperBg} resizeMode={'stretch'}
         style={[
@@ -289,15 +293,15 @@ class DragCutBlock extends React.Component {
             transform: [{ translateX: img_rect.x }, { translateY: img_rect.y }, { rotateZ: rotateStr }]
           }
         ]} >
-        <Svg width={img_rect.w} height={img_rect.h} fill="rgba(255, 229, 0, 0.1)" >
+        <Svg width={img_rect.w} height={img_rect.h} fill="rgba(255, 229, 0, 0.2)" >
           <Path d={path} stroke="#FFE600" />
         </Svg>
-        <RoundConnector limition={this.state.limition} dragsize={this.dragsize} ref={(ref) => { this.connector1 = ref }} rotation={this.imageRotation} onMove={this.onMove1.bind(this)} onMovePan={this.onMovePan1.bind(this)} onStartPan={this.onStartPan1.bind(this)} onReleasePan={this.onReleasePan1.bind(this)} title={"1"} startPos={this.startp1} />
-        <RoundConnector limition={this.state.limition} dragsize={this.dragsize} ref={(ref) => { this.connector2 = ref }} rotation={this.imageRotation} onMove={this.onMove2.bind(this)} onMovePan={this.onMovePan2.bind(this)} onStartPan={this.onStartPan2.bind(this)} onReleasePan={this.onReleasePan2.bind(this)} title={"2"} startPos={this.startp2} />
-        <RoundConnector limition={this.state.limition} dragsize={this.dragsize} ref={(ref) => { this.connector3 = ref }} rotation={this.imageRotation} onMove={this.onMove3.bind(this)} onMovePan={this.onMovePan3.bind(this)} onStartPan={this.onStartPan3.bind(this)} onReleasePan={this.onReleasePan3.bind(this)} title={"3"} startPos={this.startp3} />
-        <RoundConnector limition={this.state.limition} dragsize={this.dragsize} ref={(ref) => { this.connector4 = ref }} rotation={this.imageRotation} onMove={this.onMove4.bind(this)} onMovePan={this.onMovePan4.bind(this)} onStartPan={this.onStartPan4.bind(this)} onReleasePan={this.onReleasePan4.bind(this)} title={"4"} startPos={this.startp4} />
+        <RoundConnector limition={this.state.center_limition} dragsize={[Math.min(path_w, path_w2, path_h, path_h2), Math.min(path_w, path_w2, path_h, path_h2)]} ref={(ref) => { this.connector0 = ref }} rotation={this.imageRotation} onMove={this.onMove0.bind(this)} onMovePan={this.onMovePan0.bind(this)} onStartPan={this.onStartPan0.bind(this)} onReleasePan={this.onReleasePan0.bind(this)} title={"0"} startPos={this.startp0} isShow={false} />
 
-        <RoundConnector limition={this.state.center_limition} dragsize={this.dragsize} ref={(ref) => { this.connector0 = ref }} rotation={this.imageRotation} onMove={this.onMove0.bind(this)} onMovePan={this.onMovePan0.bind(this)} onStartPan={this.onStartPan0.bind(this)} onReleasePan={this.onReleasePan0.bind(this)} title={"0"} startPos={this.startp0} />
+        <RoundConnector limition={this.state.limition} dragsize={this.dragsize} ref={(ref) => { this.connector1 = ref }} rotation={this.imageRotation} onMove={this.onMove1.bind(this)} onMovePan={this.onMovePan1.bind(this)} onStartPan={this.onStartPan1.bind(this)} onReleasePan={this.onReleasePan1.bind(this)} title={"1"} startPos={this.startp1} isShow={this.props.showRoundConnector} />
+        <RoundConnector limition={this.state.limition} dragsize={this.dragsize} ref={(ref) => { this.connector2 = ref }} rotation={this.imageRotation} onMove={this.onMove2.bind(this)} onMovePan={this.onMovePan2.bind(this)} onStartPan={this.onStartPan2.bind(this)} onReleasePan={this.onReleasePan2.bind(this)} title={"2"} startPos={this.startp2} isShow={this.props.showRoundConnector} />
+        <RoundConnector limition={this.state.limition} dragsize={this.dragsize} ref={(ref) => { this.connector3 = ref }} rotation={this.imageRotation} onMove={this.onMove3.bind(this)} onMovePan={this.onMovePan3.bind(this)} onStartPan={this.onStartPan3.bind(this)} onReleasePan={this.onReleasePan3.bind(this)} title={"3"} startPos={this.startp3} isShow={this.props.showRoundConnector} />
+        <RoundConnector limition={this.state.limition} dragsize={this.dragsize} ref={(ref) => { this.connector4 = ref }} rotation={this.imageRotation} onMove={this.onMove4.bind(this)} onMovePan={this.onMovePan4.bind(this)} onStartPan={this.onStartPan4.bind(this)} onReleasePan={this.onReleasePan4.bind(this)} title={"4"} startPos={this.startp4} isShow={this.props.showRoundConnector} />
       </ImageBackground>
     );
   }

@@ -36,6 +36,7 @@ class WarpPerspective extends React.Component {
           imageRect={img_rect}
           imageRotation={imageRotation}
           inUse={this.props.inUse}
+          showRoundConnector={this.props.showRoundConnector}
         />
       </View>
     );

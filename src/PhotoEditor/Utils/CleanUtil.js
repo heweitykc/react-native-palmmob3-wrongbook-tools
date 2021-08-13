@@ -32,7 +32,7 @@ export default class CleanUtil extends Component {
     }
 
     onSaved = (success, path) => {
-        console.log('save?', success, path)
+        console.log('clean save?', success, path)
         let res = (success && path && path.length > 0) ? path : null
         this.props.onSaveResult && this.props.onSaveResult(res)
     }

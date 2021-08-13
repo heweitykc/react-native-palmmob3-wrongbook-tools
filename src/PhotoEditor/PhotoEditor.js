@@ -500,7 +500,7 @@ export default class PhotoEditor extends Component {
                                     {
                                         this.state.barType === 1
                                         && <DragCutBlock
-                                            dragsize={[150, 50]}
+                                            dragsize={[50, 25]}
                                             regular={true}
                                             paperBg={{ uri: imgUri }}
                                             onMove={this.onMove}
@@ -508,6 +508,7 @@ export default class PhotoEditor extends Component {
                                             imageRect={img_rect}
                                             imageRotation={0}
                                             inUse={true}
+                                            showRoundConnector={true}
                                         />
                                     }
                                     {
