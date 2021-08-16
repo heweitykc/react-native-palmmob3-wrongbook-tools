@@ -48,7 +48,8 @@ class RoundConnector extends Component {
     super(props);
 
     this.state = {
-      dragsize: this.props.dragsize
+      dragsize: this.props.dragsize,
+      isFull: this.props.isFull
     }
 
     this.panValue.addListener((ret) => {
@@ -89,7 +90,7 @@ class RoundConnector extends Component {
 
   UNSAFE_componentWillReceiveProps(nextProps) {
     if (nextProps.dragsize !== this.props.dragsize) {
-      this.setState({ dragsize: nextProps.dragsize })
+      this.setState({ dragsize: nextProps.dragsize, isFull: nextProps.isFull })
     }
   }
 
@@ -124,19 +125,35 @@ class RoundConnector extends Component {
   }
 
   render() {
+    let isFull = this.state.isFull
     let dragScope = this.state.dragsize[0];
     let dragPoint = this.state.dragsize[1];
     let isShow = this.props.isShow;
+    if (isFull) {
+      return (
+        <Animated.View
+          style={[styles.containter, {
+            top: -dragPoint / 2,
+            left: -dragScope / 2,
+            height: dragPoint,
+            width: dragScope,
+            transform: this.panValue.getTranslateTransform(),
+            opacity: isShow ? 1 : 0,
+          }]}
+          {...this.panResponder.panHandlers}
+        />
+      );
+    }
     return (
       <Animated.View
         style={[styles.containter, {
           top: dragScope * -0.5,
-          left: dragScope * -0.5,
+          left: dragScope * - 0.5,
           height: dragScope,
           width: dragScope,
           borderRadius: dragScope * 0.5,
           transform: this.panValue.getTranslateTransform(),
-          opacity: isShow ? 1 : 0
+          opacity: isShow ? 1 : 0,
         }]}
         {...this.panResponder.panHandlers}
       >
@@ -151,7 +168,7 @@ class RoundConnector extends Component {
         }]} >
           {/* <Text>{this.props.title}</Text> */}
         </View>
-      </Animated.View>
+      </Animated.View >
     );
   }
 }

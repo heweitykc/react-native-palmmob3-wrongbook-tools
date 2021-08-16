@@ -15,13 +15,23 @@ class DragCutBlock extends React.Component {
 
   updateData = (props, isInit) => {
     this.imageRect = props.imageRect
-    this.dragsize = props.dragsize
+    this.dragsize = props.dragsize            //已失效
     this.regular = props.regular
     this.paperBg = props.paperBg
     this.imageSize = props.imageSize
     this.imageRotation = props.imageRotation
     this.onMove = props.onMove
     this.inUse = props.inUse
+
+    //fix dragsize
+    let size_min = 40
+    let size_max = 100
+    let minSpace = Math.min(this.imageRect.w, this.imageRect.h)
+    let dsize = minSpace * 0.25
+    dsize = dsize > size_max ? size_max : dsize
+    dsize = dsize < size_min ? size_min : dsize
+    let ssize = dsize * 0.5
+    this.dragsize = [dsize, ssize]
 
     //default start point
     this.initPoints = props.initPoints
@@ -33,11 +43,17 @@ class DragCutBlock extends React.Component {
       this.startp4 = this.initPoints[3]
       this.startp0 = { x: (this.initPoints[1].x - this.initPoints[0].x) * 0.5 + this.initPoints[0].x, y: (this.initPoints[2].y - this.initPoints[0].y) * 0.5 + this.initPoints[0].y };
     } else {
-      this.startp1 = { x: 0, y: 0 };
-      this.startp2 = { x: props.imageRect.w, y: 0 };
-      this.startp3 = { x: 0, y: props.imageRect.h };
-      this.startp4 = { x: props.imageRect.w, y: props.imageRect.h };
-      this.startp0 = { x: props.imageRect.w * 0.5, y: props.imageRect.h * 0.5 };
+      let imgw = this.imageRect.w
+      let imgh = this.imageRect.h
+      //周围留空
+      let margin_w = (imgw - imgw * 0.7) / 2
+      let margin_h = (imgh - imgh * 0.7) / 2
+
+      this.startp1 = { x: margin_w, y: margin_h };
+      this.startp2 = { x: imgw - margin_w, y: margin_h };
+      this.startp3 = { x: margin_w, y: imgh - margin_h };
+      this.startp4 = { x: imgw - margin_w, y: imgh - margin_h };
+      this.startp0 = { x: imgw * 0.5, y: imgh * 0.5 };
     }
 
     if (isInit) {
@@ -293,10 +309,10 @@ class DragCutBlock extends React.Component {
             transform: [{ translateX: img_rect.x }, { translateY: img_rect.y }, { rotateZ: rotateStr }]
           }
         ]} >
-        <Svg width={img_rect.w} height={img_rect.h} fill="rgba(255, 229, 0, 0.05)" >
+        <Svg width={img_rect.w} height={img_rect.h} fill="rgba(255, 229, 0, 0.1)" >
           <Path d={path} stroke="#FFE600" />
         </Svg>
-        <RoundConnector limition={this.state.center_limition} dragsize={[Math.min(path_w, path_w2, path_h, path_h2), Math.min(path_w, path_w2, path_h, path_h2)]} ref={(ref) => { this.connector0 = ref }} rotation={this.imageRotation} onMove={this.onMove0.bind(this)} onMovePan={this.onMovePan0.bind(this)} onStartPan={this.onStartPan0.bind(this)} onReleasePan={this.onReleasePan0.bind(this)} title={"0"} startPos={this.startp0} isShow={false} />
+        <RoundConnector limition={this.state.center_limition} dragsize={this.regular ? [path_w, path_h] : [Math.min(path_w, path_w2, path_h, path_h2), Math.min(path_w, path_w2, path_h, path_h2)]} ref={(ref) => { this.connector0 = ref }} rotation={this.imageRotation} onMove={this.onMove0.bind(this)} onMovePan={this.onMovePan0.bind(this)} onStartPan={this.onStartPan0.bind(this)} onReleasePan={this.onReleasePan0.bind(this)} title={"0"} startPos={this.startp0} isShow={true} isFull={this.regular} />
 
         <RoundConnector limition={this.state.limition} dragsize={this.dragsize} ref={(ref) => { this.connector1 = ref }} rotation={this.imageRotation} onMove={this.onMove1.bind(this)} onMovePan={this.onMovePan1.bind(this)} onStartPan={this.onStartPan1.bind(this)} onReleasePan={this.onReleasePan1.bind(this)} title={"1"} startPos={this.startp1} isShow={this.props.showRoundConnector} />
         <RoundConnector limition={this.state.limition} dragsize={this.dragsize} ref={(ref) => { this.connector2 = ref }} rotation={this.imageRotation} onMove={this.onMove2.bind(this)} onMovePan={this.onMovePan2.bind(this)} onStartPan={this.onStartPan2.bind(this)} onReleasePan={this.onReleasePan2.bind(this)} title={"2"} startPos={this.startp2} isShow={this.props.showRoundConnector} />
