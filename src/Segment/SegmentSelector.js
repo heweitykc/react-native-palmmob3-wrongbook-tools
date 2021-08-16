@@ -25,7 +25,13 @@ export default class SegmentSelector extends Component {
     getBarPosition = (update = true, callback) => {
         this.barRef && this.barRef.measure((x, y, w, h, left, top) => {
             console.log('getBarPosition:', x, y, w, h, left, top)
-            if (!x || !y || !w || !h || !left || !top) return
+            if (x == undefined || x == null ||
+                y == undefined || y == null ||
+                w == undefined || w == null ||
+                h == undefined || h == null ||
+                left == undefined || left == null ||
+                top == undefined || top == null
+            ) return
             if (update) {
                 this.setState({
                     barPosi: [left, top, w, h]
